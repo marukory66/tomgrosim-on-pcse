@@ -21,10 +21,6 @@ from datetime import date
 class TOMGROSIM_Leaf_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
-        # LVI = Instance(list) # Initial leaf weights
-        # LAI = Instance(list) # Initial leafarea
-        # SLAI = Instance(list) # Initial specific leaf area (SLA) 
-        # DOHLI = Instance(list)  # Initial data of day of harvest of leaves (removing lower leaves)
         PD  = Float(-99.)
         POLA = Float(-99.)
         POLB = Float(-99.)
@@ -34,9 +30,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         SLAMIN  = Float(-99.)
         BETAT  = Float(-99.)
         BETAC  = Float(-99.)
-
-
-        
 
     class StateVariables(StatesTemplate):
         LV     = Instance(list)
@@ -61,9 +54,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
 
     def initialize(self, day, kiosk, parvalues):
         
-        # 暫定処置
-        # global PGRLV 
-
         #　はかきする日が入ったlist
         lists = [[1 for i in range(3)] for j in range(20)]
         list_DOHL = copy.deepcopy(lists)
