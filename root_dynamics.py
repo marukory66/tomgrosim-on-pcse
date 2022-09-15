@@ -45,7 +45,7 @@ class Simple_Root_Dynamics(SimulationObject):
         rates = self.rates
         k = self.kiosk
        
-        rates.GRRO = k.DMI * k.FR
+        rates.GRRO = k.DMI * k.FR# Dry mass partitioned to roots. The partitioning fraction ratio of roots is FR.
        
     @prepare_states
     def integrate(self, day, delt=1.0):

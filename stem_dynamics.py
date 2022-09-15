@@ -37,9 +37,7 @@ class Simple_Stem_Dynamics(SimulationObject):
         rates = self.rates
         k = self.kiosk
 
-        #DMI,FS仮置き
-        # rates.GRST = k.DMI * k.FS
-        rates.GRST = 3* 1 # Dry mass partitioned to stems. The partitioning fraction ratio of stems is FS.
+        rates.GRST = k.DMI * k.FS # Dry mass partitioned to stems. The partitioning fraction ratio of stems is FS.
 
     @prepare_states
     def integrate(self, day, delt=1.0):
