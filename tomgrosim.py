@@ -101,7 +101,7 @@ class Tomgrosim(SimulationObject):
         GASS = 0
         MRES = 0
         ASRC = 0
-        print(RGRL)
+        # print(RGRL)
 
         # self.states = self.StateVariables(kiosk,publish=["DMI","RGRL","TDM", "GASST", "MREST", "HI", "ASA", "AF", "CAF"],
         #                                   DMI=DMI,RGRL=RGRL,

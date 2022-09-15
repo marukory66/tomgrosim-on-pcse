@@ -18,8 +18,6 @@ class Simple_Root_Dynamics(SimulationObject):
     class RateVariables(RatesTemplate):
         GRRO = Float(-99.) # Growth rate of root dry mass
         
-        # DMIは後から計算した数値を使用するためにここでは不必要
-        # DMI = Float(-99.)
     class StateVariables(StatesTemplate):
         RO = Float(-99) # Root dry mass
 
@@ -46,10 +44,9 @@ class Simple_Root_Dynamics(SimulationObject):
         params = self.params
         rates = self.rates
         k = self.kiosk
-        #DMI，FR仮置き
-        # rates.GRRO = k.DMI * k.FR
-        rates.GRRO = 2 * 3 # Dry mass partitioned to roots. The partitioning fraction ratio of roots is FR.
-
+       
+        rates.GRRO = k.DMI * k.FR
+       
     @prepare_states
     def integrate(self, day, delt=1.0):
         rates = self.rates
