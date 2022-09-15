@@ -58,7 +58,6 @@ class Tomgrosim(SimulationObject):
 
         #以下追記
         DMI = Float(-99.) # Dry matter increase
-        RGRL = Instance(list)
         CVF = Float(-99.)
         DMA = Float(-99.) # Dry mass available for growth
         RGRL = Instance(list)
@@ -102,6 +101,7 @@ class Tomgrosim(SimulationObject):
         GASS = 0
         MRES = 0
         ASRC = 0
+        print(RGRL)
 
         # self.states = self.StateVariables(kiosk,publish=["DMI","RGRL","TDM", "GASST", "MREST", "HI", "ASA", "AF", "CAF"],
         #                                   DMI=DMI,RGRL=RGRL,

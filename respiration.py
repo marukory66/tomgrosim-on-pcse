@@ -22,39 +22,44 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         COEFRGR = Float(-99.)
 
     class RateVariables(RatesTemplate):
+        pass
+
+    class StateVariables(StatesTemplate):
+        #下記何のparamか不明なため追加
+        WRT = Float(-99.)
+        WST = Float(-99.)
         PMRES = Float(-99.)
         RGR = Float(-99.)
-
+    
     def initialize(self, day, kiosk, parvalues):
 
         self.params = self.Parameters(parvalues)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
-        
+        WRT = 0.
+        WST = 0.
+        PMRES = 0.
+        RGR = 0.
+        self.states = self.StateVariables(kiosk, publish=["WRT","WST","PMRES","RGR"],
+                                          WRT=WRT, WST=WST,PMRES=PMRES,RGR=RGR)    
+        self.rates = self.RateVariables(kiosk)
+    
     def __call__(self, day, drv):
         p = self.params
         r = self.rates
         kk = self.kiosk
         
-        #仮置き
-        # RMRES = (p.RMR * kk["WRT"] +
-        #          p.RML * kk["WLV"] +
-        #          p.RMS * kk["WST"] +
-        #          p.RMO * kk["WSO"])
-        # TEFF = p.Q10**((drv.TEMP-25.)/10.)
-
-        RMRES = (10)
-        TEFF = p.Q10**((30-25.)/10.)
-
-        # print("SSSSS",kk.RGRL)
+        RMRES = (p.RMR * kk["WRT"] +
+                 p.RML * kk["WLV"] +
+                 p.RMS * kk["WST"] +
+                 p.RMO * kk["WSO"])
+        TEFF = p.Q10**((drv.TEMP-25.)/10.)
 
         # The maintenance respiration was corrected by temperature and RGR (Heuvelink, 1995, Annals of Botany)
         # The correction by RGR is similar to the correction for senescence using RFSETB as RMRES *= p.RFSETB(kk["DVS"])
         # RGR is list object made in wofost.py. Calculate averaged RGR for the last 1 week = average of the first 7 RGRs in the list.
         
-        #kioskからの読み取りがうまくいってない？
-        # r.RGR = sum(kk.RGRL[0:7]) / len(kk.RGRL[0:7])
-
-        r.RGR = 3
-        r.PMRES = RMRES * TEFF * (1 - exp(-p.COEFRGR * r.RGR))
-        return r.PMRES
+        # kk.RGR = sum(kk.RGRL[0:7]) / len(kk.RGRL[0:7])
+        kk.RGR = 1
+        kk.PMRES = RMRES * TEFF * (1 - exp(-p.COEFRGR * kk.RGR))
+        return kk.PMRES
