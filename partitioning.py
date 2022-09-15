@@ -19,21 +19,7 @@ class PartioningFactors(namedtuple("partitioning_factors", "FR FL FS FO")):
 
 class DVS_Partitioning(SimulationObject):
     
-    # class RateVariables(StatesTemplate):
-    #     FR = Float(-99.)
-    #     FL = Float(-99.)
-    #     FS = Float(-99.)
-    #     FO = Float(-99.)
-    #     PF = Instance(PartioningFactors)
-    #     TPGR = Float(-99.)
-    #     TMPGR = Float(-99.)
-    #     TPGRLV = Float(-99.)
-    #     TMPGRLV = Float(-99.)
-    #     TPGRFR = Float(-99.)
-    #     TMPGRFR = Float(-99.)
-    #     TPGRST = Float(-99.)
-    #     TPGRRO = Float(-99.)
-
+    
     class StateVariables(StatesTemplate):
         FR = Float(-99.)
         FL = Float(-99.)
@@ -73,64 +59,36 @@ class DVS_Partitioning(SimulationObject):
         # Pack partitioning factors into tuple
         PF = PartioningFactors(FR, FL, FS, FO)
         
-        # Initial states
-        # self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],
-        #                                   FR=FR, FL=FL, FS=FS, FO=FO, PF=PF, 
-        #                                   TPGR=None, TMPGR=None, 
-        #                                   TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None, 
-        #                                   TPGRST=None, TPGRRO=None)
         self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],
                                           FR=FR, FL=FL, FS=FS, FO=FO, PF=PF, 
                                           TPGR=0.1, TMPGR=None, 
                                           TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None, 
                                           TPGRST=None, TPGRRO=None)
-
-
-
-
-        # Initial rates
-        # self.rates = self.RateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],
-        #                                   FR=FR, FL=FL, FS=FS, FO=FO, PF=PF, 
-        #                                   TPGR=None, TMPGR=None, 
-        #                                   TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None, 
-        #                                   TPGRST=None, TPGRRO=None)
         self.rates = self.RateVariables(kiosk)
-    # @prepare_states
-    # def integrate(self, day, delt=1.0):
+        # @prepare_states
+        # def integrate(self, day, delt=1.0):
     
     def calc_rates(self,day, drv):
         
         k = self.kiosk
         r = self.rates
 
-        #PGRLV等のrateは他の.pyからkiosk経由で持ってくる
-        #kioskは
-
-        # r.TPGRLV = sum(map(sum, k.PGRLV)) # Total potential growth rate of all the leaves
-        # r.TMPGRLV = sum(map(sum, k.MPGRLV)) # Total potential growth rate of all the leaves
-        # r.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
-        # r.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
-        
-        #簡単な式で仮置き
-        sample = [1,2,3,4]
-        r.TPGRLV = sum(sample) # Total potential growth rate of all the leaves
-        r.TMPGRLV = sum(sample) # Total potential growth rate of all the leaves
-        r.TPGRFR = sum(sample) # Total potential growth rate of all the fruits
-        r.TMPGRFR = sum(sample) # Total potential growth rate of all the fruits
-        # print(r.TMPGRFR)
-
-
+        k.TPGRLV = sum(map(sum, k.PGRLV)) # Total potential growth rate of all the leaves
+        k.TMPGRLV = sum(map(sum, k.MPGRLV)) # Total potential growth rate of all the leaves
+        k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
+        k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
+     
         # Partitioning within the vegetative plant part is at 7:3:1.5 for leaves, stem and roots, respectively. (Heuvelink, 1996, Ph.D. thesis, p.239 (Chapter 6.1)). 
         # Therefore, the total potential growth rates of stems and roots are 3/7 and 1.5/7 of that of leaves, respectively.
-        r.TPGRST = r.TPGRLV * 3/7 # Total potential growth rate of stems
-        r.TPGRRO = r.TPGRLV * 1.5/7 # Total potential growhth rate of roots
-        r.TPGR = r.TPGRLV + r.TPGRST + r.TPGRRO + r.TPGRFR # Total potential growth rate of all the organs
-        r.FR = r.TPGRRO / r.TPGR
-        r.FL = r.TPGRLV / r.TPGR
-        r.FS = r.TPGRST / r.TPGR
-        r.FO = r.TPGRFR / r.TPGR
-        r.PF = PartioningFactors(r.FR, r.FL, r.FS, r.FO)
-
-        r.TMPGR = r.TMPGRLV + r.TMPGRLV * 3/7 + r.TMPGRLV * 1.5/7 + r.TMPGRFR # Total maximum potential growth rate of all the organs
+        k.TPGRST = k.TPGRLV * 3/7 # Total potential growth rate of stems
+        k.TPGRRO = k.TPGRLV * 1.5/7 # Total potential growhth rate of roots
+        k.TPGR = k.TPGRLV + k.TPGRST + k.TPGRRO + k.TPGRFR # Total potential growth rate of all the organs
+        k.FR = k.TPGRRO / k.TPGR
+        k.FL = k.TPGRLV / k.TPGR
+        k.FS = k.TPGRST / k.TPGR
+        k.FO = k.TPGRFR / k.TPGR
+        r.PF = PartioningFactors(k.FR, k.FL, k.FS, k.FO)
+        #↑注意
+        k.TMPGR = k.TMPGRLV + k.TMPGRLV * 3/7 + k.TMPGRLV * 1.5/7 + k.TMPGRFR # Total maximum potential growth rate of all the organs
 
         return self.rates.PF
