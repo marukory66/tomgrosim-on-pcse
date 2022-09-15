@@ -46,7 +46,7 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         RMRES = (10)
         TEFF = p.Q10**((30-25.)/10.)
 
-        print("SSSSS",kk.RGRL)
+        # print("SSSSS",kk.RGRL)
 
         # The maintenance respiration was corrected by temperature and RGR (Heuvelink, 1995, Annals of Botany)
         # The correction by RGR is similar to the correction for senescence using RFSETB as RMRES *= p.RFSETB(kk["DVS"])

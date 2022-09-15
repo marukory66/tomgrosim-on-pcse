@@ -74,11 +74,19 @@ class DVS_Partitioning(SimulationObject):
         PF = PartioningFactors(FR, FL, FS, FO)
         
         # Initial states
+        # self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],
+        #                                   FR=FR, FL=FL, FS=FS, FO=FO, PF=PF, 
+        #                                   TPGR=None, TMPGR=None, 
+        #                                   TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None, 
+        #                                   TPGRST=None, TPGRRO=None)
         self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],
                                           FR=FR, FL=FL, FS=FS, FO=FO, PF=PF, 
-                                          TPGR=None, TMPGR=None, 
+                                          TPGR=0.1, TMPGR=None, 
                                           TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None, 
                                           TPGRST=None, TPGRRO=None)
+
+
+
 
         # Initial rates
         # self.rates = self.RateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR"],

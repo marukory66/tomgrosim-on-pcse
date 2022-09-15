@@ -42,7 +42,51 @@ for index in range(20):
 # print(A)
 
 #%%
-A = [[0,0,0,0,0,0,0]]
-li = lambda i:i.append([0,0,0],A)
-print(li)
+import datetime as dt
+lists = [[i for i in range(1,8)]]
+print(lists)
 
+print(lists)
+
+# %%
+import numpy as np
+import datetime 
+import pandas as pd
+start = datetime.datetime.strptime("2021-12-1", "%Y-%m-%d")
+date_generated = pd.date_range(start, periods=6,freq="3d")
+date_generated = [str(i) for i in date_generated]
+# print(np.array(str(date_generated)).reshape(2,3).tolist())
+print(date_generated.strftime("%Y-%m-%d"))
+
+# %%
+from datetime import datetime, timedelta
+import numpy as np
+
+date_list = [datetime(2020, 1, 25) + timedelta(days=i) for i in range(7)]
+date_list = [d.strftime("%Y-%m-%d") for d in date_list]
+da = date_list[-1]
+# print(da)
+# date_lists = [str(da) + timedelta(days=i) for i in range(1,180,3)]
+# print(date_lists)
+
+
+
+# 日付のリスト生成()
+# date_list = [datetime(2020, 1, 25) + timedelta(days=i) for i in range(20)]
+# # 文字列に変換
+# date_str_list = [d.strftime("%Y-%m-%d") for d in date_list]
+# print(np.array(date_str_list).reshape([20,3]))
+
+
+# %%
+# lists = [[0,0,0,0,0,0,0]]
+# for index in range(20):
+#     lists.append([0,0,0])
+start = datetime.datetime.strptime("2021-12-1", "%Y-%m-%d")
+date_generated = pd.date_range(start, periods=60,freq="3d")
+date_generated = [str(i) for i in date_generated]
+print(np.array(date_generated).reshape([3,20]))
+print(date_generated.strftime("%Y-%m-%d"))
+
+
+# %%

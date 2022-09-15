@@ -72,7 +72,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         #!=None回避のためにNoneではなく1を設置
         lists = [[1 for i in range(4)] for j in range(5)]
         FD = copy.deepcopy(lists)
-        print(FD)
+        # print(FD)
         FF = copy.deepcopy(lists)
         DOHF = copy.deepcopy(lists)
         FRAGE = copy.deepcopy(lists)
@@ -121,7 +121,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         # p = self.Parameters(parvalues)
         # print("DMCI",p.DMCI)
         # print("PD",p.PD)
-        print(k.DVSF)
+        # print(k.DVSF)
         
 
         # List of harvested (0: harvested, 1: not yet harvested)
