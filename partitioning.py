@@ -19,7 +19,6 @@ class PartioningFactors(namedtuple("partitioning_factors", "FR FL FS FO")):
 
 class DVS_Partitioning(SimulationObject):
     
-    
     class StateVariables(StatesTemplate):
         FR = Float(-99.)
         FL = Float(-99.)
