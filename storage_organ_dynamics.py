@@ -45,15 +45,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         SDMC = Float(-99.) # Structural dry matter content of a fruit
         FRAGE = Instance(list) # Age of a fruit [d]
         
-
-
     class RateVariables(RatesTemplate):
-        # GRFR = Instance(list) # Actual growth rate of a fruit
-        # GRFRF = Instance(list) # Actual growth rate of a fruit on a fresh mass basis
-        # PGRFR = Instance(list) # Potential growth rate of a fruit
-        # MPGRFR = Instance(list) # Maximum potential growth rate of a fruit
-        # SDMC = Float(-99.) # Structural dry matter content of a fruit
-        # FRAGE = Instance(list) # Age of a fruit [d]
         pass
 
     def initialize(self, day, kiosk, parvalues):
@@ -69,10 +61,11 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         FF = params.FFI # List of fresh mass of fruits. Weights of the fruits that have not generated yet are 0.
         DOHF = params.DOHFI
 
-        #!=None回避のためにNoneではなく1を設置
+        # lists = [[1,1,1,1,1,1,1]]
+        # for index in range(20):
+        #     lists.append([1,1,1])
         lists = [[1 for i in range(4)] for j in range(5)]
         FD = copy.deepcopy(lists)
-        # print(FD)
         FF = copy.deepcopy(lists)
         DOHF = copy.deepcopy(lists)
         FRAGE = copy.deepcopy(lists)
@@ -80,9 +73,6 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         PGRFR = copy.deepcopy(lists)
         GRFR = copy.deepcopy(lists)
         MPGRFR = copy.deepcopy(lists)
-
-        # DOEF = copy.deepcopy(lists)
-        
         SDMC = 0
         WSO = 0.
         DWSO = 0.
@@ -96,34 +86,17 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
                 else: # Not harvested yet = living
                     WSO += FD[i][j]
         TWSO = WSO + DWSO # Total dry mass of fruits (both living and dead)
-
-        # self.states = self.StateVariables(kiosk, publish=["FD","DMC","FF","DOHF","WSO","DWSO","YWSO","TWSO"],
-        #                                   FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,
-        #                                   WSO=WSO, DWSO=DWSO, YWSO=YWSO, TWSO=TWSO)
-        
         self.states = self.StateVariables(kiosk, publish=["FD","DMC","FF","DOHF","WSO","DWSO","YWSO","TWSO","GRFR","PGRFR","MPGRFR","SDMC","FRAGE"],
                                           FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,GRFR=GRFR, GRFRF=GRFRF, PGRFR=PGRFR, MPGRFR=MPGRFR, SDMC=SDMC, FRAGE=FRAGE,
                                           WSO=WSO, DWSO=DWSO, YWSO=YWSO, TWSO=TWSO)
-        
-        
-
-        
-        # self.rates = self.RateVariables(kiosk, publish=["GRFR","PGRFR","MPGRFR","SDMC","FRAGE"], 
-                                        # GRFR=None, GRFRF=None, PGRFR=None, MPGRFR=None, SDMC=None, FRAGE=None)
         self.rates = self.RateVariables(kiosk)
     @prepare_rates
-    # def calc_potential(self, kiok, day, drv):
     def calc_potential(self,  day, drv):
         
         k = self.kiosk
         r = self.rates
         p = self.params
-        # p = self.Parameters(parvalues)
-        # print("DMCI",p.DMCI)
-        # print("PD",p.PD)
-        # print(k.DVSF)
         
-
         # List of harvested (0: harvested, 1: not yet harvested)
         LOH = k.DOHF
         for i in range(0, len(k.DOHF)):
@@ -132,26 +105,10 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
                     LOH[i][j] = 1
                 else: 
                     LOH[i][j] = 0
-
-        # Fruit age
         r.FRAGE = k.DOEF
-        # print("FRAGE",r.FRAGE)
-        # print(k.DOEF[1][0])
-        # print("DD",k.DOEF)
         for i in range(0, len(k.DOEF)):
             for j in range(0, len(k.DOEF[i])):
                 if k.DOEF[i][j] != None:
-                    # print("DOEF_stage",type(k.DOEF[i][j]))
-                    # print("DOEF_stage",k.DOEF[i][j])                    
-                    # age_days = day - k.DOEF[i][j]
-                    # print(i,j)
-
-                    # print("aaa",k.DOEF[0][1])
-                    # DOEF_days = dt.strptime(k.DOEF[i][j],"%Y/%m/%d")
-                    # # print(type(DOEF_days.date()))
-                    # age_days = day - DOEF_days.date()
-                    # r.FRAGE[i][j] = age_days.days
-
                     r.FRAGE[i][j] = k.DOEF[i][j]
                 else:
                     r.FRAGE[i][j] = 0
@@ -162,29 +119,23 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         # Therefore one set of parameter values is sufficient to describe the potential dry weight growth of trusses at different temperatures satisfactorily. (Heuvelink, 1996, Annals of Botany)
         print("day",day)
         # r.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
-        r.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
-        r.MPGRFR = [[a * b for a, b in zip(*rows)] for rows in zip(r.MPGRFR, LOH)] # Set MPGRFR of harvested leaves at 0.
+        k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
+        k.MPGRFR = [[a * b for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] # Set MPGRFR of harvested leaves at 0.
         # Potential growth rate of fruits (PGRFR) is MPGRFR * CAF.
         # The cumulative adaptation factor (CAF) is a state variable calculated in wofost.py
-        r.PGRFR = [list(map(lambda x: k.CAF * x, row)) for row in r.MPGRFR]
+        k.PGRFR = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRFR]
 
         # Structural DMC (sDMC)
-        r.SDMC = p.SDMC
+        k.SDMC = p.SDMC
 
     @prepare_rates
     def calc_rates(self, day, drv):
-        r  = self.rates
+        r = self.rates
         p = self.params
         k = self.kiosk
 
-        k.GRFR = [list(map(lambda x: 2 * x / 3, row)) for row in k.PGRFR] 
-        # r.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR) 
-        k.GRFRF = [list(map(lambda x: x / 2, row)) for row in k.GRFR]
-        # k.GRFRF = [list(map(lambda x: x / k.SDMC, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase
-
-        # r.GRFR = [list(map(lambda x: 2 * x / 3, row)) for row in k.PGRFR] 
-        # r.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR) 
-        # r.GRFRF = [list(map(lambda x: x / r.SDMC, row)) for row in r.GRFR] # Convert dry mass increase to fresh mass increase
+        k.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR) 
+        k.GRFRF = [list(map(lambda x: x / k.SDMC, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase
 
     @prepare_states
     def integrate(self,day, delt=1.0):
@@ -195,15 +146,10 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
 
         # Update fruit dry mass
         s.FD = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.FD, k.GRFR)) 
-        # s.FD = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.FD, r.GRFR)) 
 
-        #integreteだけで稼働させるためにpublishされていない
-        k.GRFRF =  [[1 for i in range(4)] for j in range(5)]
-        
         # Update fruit fresh mass
         s.FF = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.FF, k.GRFRF)) 
-        # s.FF = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.FF, r.GRFRF)) 
-
+        
         # Update fruit dry matter content
         s.DMC = [[a / b for a, b in zip(*rows)] for rows in zip(s.FD, s.FF)]
 
