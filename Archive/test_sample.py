@@ -15,7 +15,7 @@ from models import sample
 # wd = "/Users/naofujiuchi/Documents/Diary/research/crop_simulation_model"
 soil = PCSEFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/lintul3_springwheat.soil")
 site = PCSEFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/lintul3_springwheat.site")
-crop_hujiuchi = PCSEFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/SUG0601_modified.crop")
+crop_hujiuchi = PCSEFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/SUG0601.crop")
 parameters = ParameterProvider(sitedata=site, soildata=soil, cropdata=crop_hujiuchi)
 weatherfile = os.path.join("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/nl1.xlsx")
 agromanagement_file = os.path.join("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/sugarbeet_calendar.agro")
@@ -26,7 +26,7 @@ agromanagement = YAMLAgroManagementReader(agromanagement_file) # agromanagement
 wdp = ExcelWeatherDataProvider(weatherfile) # daily weather observation
 #%%
 # Run simulation
-
+#sample部分でモデルを指定
 wofsim = sample(parameters, wdp, agromanagement)
 wofsim.run_till_terminate()
 df_results = pd.DataFrame(wofsim.get_output())
