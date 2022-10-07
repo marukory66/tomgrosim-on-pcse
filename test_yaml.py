@@ -12,7 +12,6 @@ from pcse.db import NASAPowerWeatherDataProvider
 from pcse.util import WOFOST72SiteDataProvider
 from pcse.base import ParameterProvider
 from models import sample
-#%%
 # crop = YAMLCropDataProvider
 # p = YAMLCropDataProvider(fpath=r"C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/")
 
@@ -222,9 +221,8 @@ class my_YAMLCropDataProvider(MultiCropDataProvider):
 YAMLCropDataProvider = my_YAMLCropDataProvider
 #%%
 p = YAMLCropDataProvider(fpath=r"C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/yamls")
-p.set_active_crop('sample','Winter_wheat_101')
-print(ProcessLookupError())
-#%%
+p.set_active_crop('tomato','tomato_01')
+# print(ProcessLookupError())
 crop = p
 soil = CABOFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/ec3.soil")
 site = WOFOST72SiteDataProvider(WAV=100,CO2=360)
@@ -255,7 +253,7 @@ weatherfile = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on
 weatherdataprovider = ExcelWeatherDataProvider(weatherfile)
 agromanagement = yaml.load(yaml_agro,Loader=yaml.Loader)
 wofost = sample(parameterprovider, weatherdataprovider, agromanagement)
-#%%
+
 wofost.run_till_terminate()
 output = wofost.get_output()
 df = pd.DataFrame(output).set_index("day")

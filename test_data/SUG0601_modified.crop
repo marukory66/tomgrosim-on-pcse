@@ -3,19 +3,19 @@
 # CROP DATA FILE for use with WOFOST Version 5.4, June 1992
 #
 # SUGAR BEET 601
-# Regions : Germany, Northern and Central France, Netherlands, Belgium, 
+# Regions : Germany, Northern and Central France, Netherlands, Belgium,
 #           Luxembourg, UK, Ireland, Denmark
 # Sowing date : between 1 and 10 April
 # mean date of harvest : between 17 and 27 October
 # Modified for tomato by Naomichi Fujiuchi (naofujiuchi@gmail.com), April 2022
 
-# Derived from SUCROS87 data set for sugar beet.  
-# Calibrated for use in WOFOST model at the Centre for Agrobiological 
-# Research (CABO-DLO) for the simulation of crop growth and yield on the 
+# Derived from SUCROS87 data set for sugar beet.
+# Calibrated for use in WOFOST model at the Centre for Agrobiological
+# Research (CABO-DLO) for the simulation of crop growth and yield on the
 # basis of daily weather data.
-# Purpose of application: Crop growth monitoring with agrometeorological 
+# Purpose of application: Crop growth monitoring with agrometeorological
 # model in the EC.
-# Developed in the framework of JRC Agriculture Project Action 3. 
+# Developed in the framework of JRC Agriculture Project Action 3.
 
 CRPNAM='Sugar beet 601, N-EC'
 
@@ -31,9 +31,9 @@ DLO      = -99.0    # optimum daylength for development hr
 DLC      = -99.0    # critical daylength (lower threshold) hr
 TSUM1    =  650.    # temp. sum from emergence to init. beet growth cel d
 TSUM2    = 1400.    # temp. sum from init. beet growth to maturity cel d
-DTSMTB   =  0.00    # daily increase in temp. sum 
+DTSMTB   =  0.00    # daily increase in temp. sum
                     # as function of av. temp. cel; cel d
-            
+
 DVSI = 0.           # initial DVS
 DVSEND   =   2.00   # development stage at harvest (in this case a dummy)
 
@@ -43,7 +43,7 @@ LAIEM    =   0.0007 # leaf area index at emergence ha ha-1
 RGRLAI   =   0.0160 # maximum relative increase in LAI ha ha-1 d-1
 
 # green area
-SLATB    =   0.00,    0.0020,   # specific leaf area  
+SLATB    =   0.00,    0.0020,   # specific leaf area
              2.00,    0.0020     # as a function of DVS -; ha kg-1
 SPA      =   0.000  # specific pod area ha kg-1
 SSATB =   0.0, 0.0,  # specific stem area ha kg-1
@@ -67,12 +67,12 @@ POFD     =  1.31    # Richards parameter a for potential fruit growth (Heuvelink
 SDMC     =  0.08    # Structural dry matter content of fruit.
 
 # assimilation
-KDIFTB =  0.0, 0.69, # extinction coefficient for diffuse visible light - 
+KDIFTB =  0.0, 0.69, # extinction coefficient for diffuse visible light -
          2.0, 0.69  # as function of DVS
 EFFTB  =  0.0, 0.45, # light-use effic. single leaf kg ha-1 hr-1 j-1 m2 s
         40.0, 0.45  # as function of daily mean temp.
 AMAXTB   =   0.00,   22.50,     # max. leaf CO2 assim. rate
-             1.00,   45.00,     # 
+             1.00,   45.00,     #
              1.13,   45.00,
              1.80,   36.00,
              2.00,   36.00
@@ -137,7 +137,7 @@ FOTB     =   0.00,    0.00,     # fraction of above-gr. DM to stor. org.
 
 # death rates
 PERDL    =   0.030  # max. rel. death rate of leaves due to water stress
-RDRRTB   =   0.00,    0.000,    # rel. death rate of stems 
+RDRRTB   =   0.00,    0.000,    # rel. death rate of stems
              1.50,    0.000,    # as a function of DVS -; kg kg-1 d-1
              1.5001,  0.020,
              2.00,    0.020
@@ -173,42 +173,41 @@ NFIX     =   0.00   # fraction of N-uptake from biol. fixation kg kg-1
 DMV = 0
 DMI = 0
 PD =  1.0
-SPA = 0
 ROI = 0
 STI = 0
 TDWI = 0.51
-FDI = 
+FDI =
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
-    0.0, 0.0 
-DMCI = 
+    0.0, 0.0
+DMCI =
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
-    0.0, 0.0 
-FFI = 
+    0.0, 0.0
+FFI =
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
-    0.0, 0.0 
-DOHFI = 
+    0.0, 0.0
+DOHFI =
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
-    0.0, 0.0 
-RGRL = 
+    0.0, 0.0
+RGRL =
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
     0.0, 0.0,
-    0.0, 0.0 
+    0.0, 0.0
