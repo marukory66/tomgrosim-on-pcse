@@ -14,7 +14,6 @@ class Simple_Root_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
         ROI = Float(-99.) # Initial root dry mass 
-                    
     class RateVariables(RatesTemplate):
         GRRO = Float(-99.) # Growth rate of root dry mass
         
@@ -27,7 +26,7 @@ class Simple_Root_Dynamics(SimulationObject):
         :param kiosk: variable kiosk of this PCSE  instance
         :param parameters: ParameterProvider object with key/value pairs
         """
-
+        print(vars(parameters))
         self.params = self.Parameters(parameters)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk

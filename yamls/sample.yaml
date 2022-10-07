@@ -45,18 +45,16 @@ CropParameters:
     EcoTypes:
         winterwheat: &winterwheat
             <<: *GenericC3
-            S2:
-            -  0.0
+            COEFRGR:
+            -  0.5
+            CVL:
+            -  33
             - Lower threshold temperature for emergence
             - ['C']
             S3:
             - [ 0.0,  0.0,
                30.0, 30.0,
                45.0, 30.0]
-            - daily increase in temperature sum as function of daily average temperature
-            - ['C', 'C']
-            COEFRGR:
-            -  0.5
             - daily increase in temperature sum as function of daily average temperature
             - ['C', 'C']
             S4:
@@ -78,24 +76,4 @@ CropParameters:
             - 16.8
             - optimum daylength for development
             - ['hr']
-            TSUM1:
-            -  543
-            - temperature sum from emergence to anthesis
-            - ['C.d']
-            TSUM2:
-            - 1194
-            - temperature sum from anthesis to maturity
-            - ['C.d']
-            RGRLAI:
-            - 0.0082
-            - maximum relative increase in LAI
-            - ['d-1']
-            VERNBASE:
-            - 10.0
-            - Base vernalization requirement
-            - ['d']
-            VERNSAT:
-            - 49.0
-            - Saturated vernalization requirement
-            - ['d']
-        
+            

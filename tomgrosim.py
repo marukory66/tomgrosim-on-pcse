@@ -60,7 +60,7 @@ class Tomgrosim(SimulationObject):
         pass
         
     def initialize(self, day, kiosk, parvalues):
-        
+        print("aaa",vars(parvalues))
         print("tomgrosim.py")
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
