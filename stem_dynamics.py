@@ -11,26 +11,29 @@ from pcse.base import ParamTemplate, StatesTemplate, RatesTemplate, \
 class Simple_Stem_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
-        STI = Float(-99.) # Initial stem dry mass 
-                    
+        STI = Float(-99.) # Initial stem dry mass
+
     class RateVariables(RatesTemplate):
         GRST = Float(-99.) # Growth rate of stem dry mass
 
     class StateVariables(StatesTemplate):
-        ST = Float(-99) # Stem dry mass
-
+        # ST = Float(-99) # Stem dry mass
+        WST = Float(-99)
+        TWST = Float(-99) # Stem dry mass
     def initialize(self, day, kiosk, parameters):
 
         self.params = self.Parameters(parameters)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
-        
+
         # INITIAL STATES
         params = self.params
-        ST = params.STI
+        # ST = params.STI
+        WST = params.STI
+        TWST = WST
 
-        self.states = self.StateVariables(kiosk, publish=["ST"],
-                                          ST=ST)
+        self.states = self.StateVariables(kiosk, publish=["WST","TWST"],
+                                          WST=WST,TWST=TWST)
 
     @prepare_rates
     def calc_rates(self,day, drv):
@@ -44,4 +47,5 @@ class Simple_Stem_Dynamics(SimulationObject):
         rates = self.rates
         states = self.states
 
-        states.ST += rates.GRST
+        states.WST += rates.GRST
+        states.TWST = rates.WST

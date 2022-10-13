@@ -9,16 +9,17 @@ from pcse.decorators import prepare_rates, prepare_states
 from pcse.util import limit, merge_dict, AfgenTrait
 from pcse.base import ParamTemplate, StatesTemplate, RatesTemplate, \
     SimulationObject, VariableKiosk
-    
+
 class Simple_Root_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
-        ROI = Float(-99.) # Initial root dry mass 
+        ROI = Float(-99.) # Initial root dry mass
     class RateVariables(RatesTemplate):
         GRRO = Float(-99.) # Growth rate of root dry mass
-        
+
     class StateVariables(StatesTemplate):
-        RO = Float(-99) # Root dry mass
+        WRO = Float(-99)
+        TWRO = Float(-99) # Root dry mass
 
     def initialize(self, day, kiosk, parameters):
         """
@@ -26,29 +27,30 @@ class Simple_Root_Dynamics(SimulationObject):
         :param kiosk: variable kiosk of this PCSE  instance
         :param parameters: ParameterProvider object with key/value pairs
         """
-        print(vars(parameters))
+        # print(vars(parameters))
         self.params = self.Parameters(parameters)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
-        
+
         # INITIAL STATES
         params = self.params
-        RO = params.ROI
-
-        self.states = self.StateVariables(kiosk, publish=["RO"],
-                                          RO=RO)
+        WRO = params.ROI
+        TWRO = WRO
+        self.states = self.StateVariables(kiosk, publish=["TWRO","WRO"],
+                                          TWRO=TWRO,WRO=WRO)
 
     @prepare_rates
     def calc_rates(self,day, drv):
         params = self.params
         rates = self.rates
         k = self.kiosk
-       
+
         rates.GRRO = k.DMI * k.FR# Dry mass partitioned to roots. The partitioning fraction ratio of roots is FR.
-       
+
     @prepare_states
     def integrate(self, day, delt=1.0):
         rates = self.rates
         states = self.states
 
-        states.RO += rates.GRRO
+        states.WRO += rates.GRRO
+        states.TWRO = states.WRO

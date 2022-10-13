@@ -33,6 +33,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         SLAMIN  = Float(-99.)
         BETAT  = Float(-99.)
         BETAC  = Float(-99.)
+        LVI = Instance(list) # Initial leaf weights
+        LAI = Instance(list) # Initial leafarea
+        SLAI = Instance(list) # Initial specific leaf area (SLA)
+        DOHLI = Instance(list)  # Initial data of day of harvest of leaves (removing lower leaves)
+
 
     class StateVariables(StatesTemplate):
         LV     = Instance(list)
@@ -55,43 +60,17 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         pass
 
     def initialize(self, day, kiosk, parvalues):
-        #いいやり方が思いつかないので，汚い
-        shift_days = 3
-        date_list = [day + timedelta(days=i) for i in range(0,21,shift_days)]
-        date_str_list = [d.strftime("%Y-%m-%d") for d in date_list]
-        date_second = date_str_list[-1] 
-        date_second = datetime.strptime(date_second,"%Y-%m-%d").date()
-        date_second = date_second + timedelta(days=shift_days)
-        date_list_sec =  [date_second  + timedelta(days=i) for i in range(0,180,shift_days)]
-        days_lists = np.array(date_list_sec).reshape([20,3]).tolist()
-        days_lists.insert(0,date_str_list)
-        days_lists = [[datetime.strptime(str(dd),"%Y-%m-%d").date() for dd in d]for d in days_lists]
-        
-        num_lists = []
-        for index in range(20):
-            num_lists.append([0.001,0.001,0.001])
-        DOHL = copy.deepcopy(days_lists)
-        LV = copy.deepcopy(num_lists)
-        SLA = copy.deepcopy(num_lists)
-        LA = copy.deepcopy(num_lists)
-        PGRLV = copy.deepcopy(num_lists)
-        ACL = copy.deepcopy(num_lists)
-        POL = copy.deepcopy(num_lists)
-        LVAGE = copy.deepcopy(days_lists)
-        PGRLV = copy.deepcopy(num_lists)
-        MPGRLV = copy.deepcopy(num_lists)
-        GRLV = copy.deepcopy(num_lists)
-        SSLA = 1
+
         self.kiosk  = kiosk
         self.params = self.Parameters(parvalues)
 
         # CALCULATE INITIAL STATE VARIABLES
         params = self.params
         # Initial leaf biomass, leaf area, and leaf age
-        # LV = params.LVI # Dry weights of the leaves that have not generated yet are 0.
-        # LA = params.LAI # List of initial leaf area
+        LV = params.LVI # Dry weights of the leaves that have not generated yet are 0.
+        LA = params.LAI # List of initial leaf area
         # SLA = params.SLAI  # SLAs of the leaves that have not generated yet are 0.
-        # DOHL = params.DOHLI
+        DOHL = params.DOHLI
         WLV = 0.
         DWLV = 0.
         LAI = 0.
@@ -106,8 +85,8 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
 
         # Initialize StateVariables object
         self.states = self.StateVariables(kiosk, publish=["LV","LA","SLA","LAI","TWLV","WLV","DWLV","DOHL","ACL","SSLA","LVAGE","GRLV"],
-                                          LV=LV, LA=LA, SLA=SLA,ACL=ACL,LVAGE=LVAGE,PGRLV=PGRLV,MPGRLV=MPGRLV,POL=POL,
-                                          LAI=LAI, WLV=WLV, DWLV=DWLV, TWLV=TWLV,GRLV=GRLV,SSLA=SSLA,
+                                          LV=LV, LA=LA, SLA=params.SLAI,ACL=[],LVAGE=[],PGRLV=[],MPGRLV=[],POL=[],
+                                          LAI=LAI, WLV=WLV, DWLV=DWLV, TWLV=TWLV,GRLV=[],SSLA=None,
                                           DOHL=DOHL)
         self.rates = self.RateVariables(kiosk)
     @prepare_rates
@@ -121,27 +100,26 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
             for j in range(0, len(k.DOHL[i])):
                 if k.DOHL[i][j] == None:
                     LOH[i][j] = 1
-                else: 
+                else:
                     LOH[i][j] = 0
         # Leaf age
-        k.DOEL = copy.deepcopy(k.LVAGE)
+        k.LVAGE = k.DOEL
         for i in range(0, len(k.DOEL)):
             for j in range(0, len(k.DOEL[i])):
                 if k.DOEL[i][j] != None:
                     age_days = day - k.DOEL[i][j]
                     k.LVAGE[i][j] = k.DOEL[i][j]
                 else:
-                    k.LVAGE[i][j] = 0            
+                    k.LVAGE[i][j] = 0
 
         # List of potential leaf expansion rate of each leaf
-        # The first derivative of a Gompertz function relating area of growing leaves to time from leaf appearance (Berin, 1993, Ph.D. thesis) 
+        # The first derivative of a Gompertz function relating area of growing leaves to time from leaf appearance (Berin, 1993, Ph.D. thesis)
         # yields the potential area expansion rate of a leaf (Heuvelink and Bertin, 1994, J. Hort. Sci,)
-        
-        #直置き後で直す すごい気になる
-        weatherfile = os.path.join("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/nl1.xlsx")
-        wdp = ExcelWeatherDataProvider(weatherfile) # daily weather observation
-        drv = wdp(day)
-        
+
+        # weatherfile = os.path.join("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/nl1.xlsx")
+        # wdp = ExcelWeatherDataProvider(weatherfile) # daily weather observation
+        # drv = wdp(day)
+
         drv.TEMP = ((drv.TMAX + drv.TMIN)/2)
         if drv.TEMP <= 28:
             FTEMP = 1.0 + 0.0281 * (drv.TEMP - 28)
@@ -150,8 +128,8 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         #記載が無いため仮置き 400固定でOK
         drv.CO2 = 400
         FCO2 = 1 + 0.003 * (drv.CO2 - 350)
-        
-        k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density 
+
+        k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
         k.POL = [[a * b for a, b in zip(*rows)] for rows in zip(k.POL, LOH)] # Set POL of harvested leaves at 0.
         # Structural SLA (sSLA)
         # sSLA calculation of TOMGRO (Jones et al., 1991, Transaction of the ASAE). Parameter values of (Heuvelink and Bertin, 1994, J. Hort. Sci.) were used.
@@ -173,11 +151,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         p = self.params
         k = self.kiosk
         # Growth rate leaves
-        k.GRLV = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRLV] # List of dry mass partitioned to each leaf depending on its potential growth rate (PGRLV)        
+        k.GRLV = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRLV] # List of dry mass partitioned to each leaf depending on its potential growth rate (PGRLV)
         # Actual leaf expansion rate
         k.ACL = [list(map(lambda x: x / (1 + p.FRPET), row)) for row in k.GRLV] # Exclude petiole from the growth rate of leaf
         k.ACL = [list(map(lambda x: x * k.SSLA, row)) for row in k.ACL] # Convert dry mass increase to leaf expansion
-         
+
     @prepare_states
     def integrate(self, day, delt=1.0):
 
@@ -187,11 +165,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k = self.kiosk
 
         # Update leaf biomass states
-        s.LV = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.LV, k.GRLV)) 
-        
+        s.LV = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.LV, k.GRLV))
+
         # Update leaf area
         s.LA = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.LA, k.ACL))
-        
+
         # Update leaf SLA
         s.SLA = [[a / b for a, b in zip(*rows)] for rows in zip(s.LA, s.LV)]
 

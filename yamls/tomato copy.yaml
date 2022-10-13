@@ -288,12 +288,12 @@ CropParameters:
             - relative maintenance respiration rate of stems
             - rel. maint. resp. rate stems kg CH2O kg-1 d-1 It is the same value with that for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
             - ['d-1']
-            #RFSETB:
-            #- [0.00, 1.000,
-            #   2.00, 1.000]
-            #- reduction factor for senescence as function of DVS
-            #- red. factor for senescence as function of DVS -; -
-            #- ['-', '-']
+            RFSETB:
+            - [0.00, 1.000,
+               2.00, 1.000]
+            - reduction factor for senescence as function of DVS
+            - red. factor for senescence as function of DVS -; -
+            - ['-', '-']
             COEFRGR:
             - 33
             - coefficient of correction by RGR (senescence) for maintenance respiration (Heuvelink, 1995, Annals of Botany)
@@ -465,7 +465,7 @@ CropParameters:
                0.0, 0.0,
                0.0, 0.0,
                0.0, 0.0,
-               0.0, 0.0
+               0.0, 0.0,
                0.0, 0.0]
             DOHFI:
             -  [0.0, 0.0,
@@ -474,9 +474,20 @@ CropParameters:
                0.0, 0.0,
                0.0, 0.0,
                0.0, 0.0]
+            RGRL:
+            - [0.0, 0.0,
+               0.0, 0.0,
+               0.0, 0.0,
+               0.0, 0.0,
+               0.0, 0.0,
+               0.0, 0.0]
+            sample1:
+               - [0,0,0]
             sample2:
                - [[2,3],[2,3]]
             #追加20221011
+            DMII:
+            - 0.0015
     Varieties:
         tomato_01:
             <<: *tomato

@@ -45,44 +45,39 @@ class DVS_Phenology(SimulationObject):
     def initialize(self, day, kiosk):
         self.kiosk = kiosk
         self._connect_signal(self._on_CROP_FINISH, signal=signals.crop_finish)
-        
-        # 初期値挿入用list
-        lists = [[0,0,0,0,0,0,0]]
-        for index in range(20):
-            lists.append([0,0,0])
-        DVS = 10 #自動更新されない？
-        DVSF = copy.deepcopy(lists)
-        DOEL = copy.deepcopy(lists)
-        DOEF = copy.deepcopy(lists)
-        DVR = 1
-        DVRF = copy.deepcopy(lists)
-        
+
+
+        DVS = self.params.DVSI
+        DVSF = self.params.DVSFI
+        DOEL = self.params.DOELI
+        DOEF = self.params.DOEFI
+
         self.states = self.StateVariables(kiosk, publish=["DVS","DVSF","DOEL","DOEF","DVRF","DVR"],
-                                          DVS=DVS, DVSF=DVSF,DVRF=DVRF,DVR=DVR,
+                                          DVS=DVS, DVSF=DVSF,DVRF=[],DVR=None,
                                           DOEL=DOEL, DOEF=DOEF
                                           )
         self.rates = self.RateVariables(kiosk)
-        
+
     @prepare_rates
     def calc_rates(self, day, drv):
-        
-        p = self.params 
+
+        p = self.params
         r = self.rates
         s = self.states
         k = self.kiosk
-        
-        drv = wdp(day) 
+
+        drv = wdp(day)
         drvTEMP = ((drv.TMIN + drv.TMAX)/2)
-        # Development rate of a plant (DVR) depends on daily mean temperature (drv.TEMP) and plant age (DVS). 
+        # Development rate of a plant (DVR) depends on daily mean temperature (drv.TEMP) and plant age (DVS).
         r.DVR = self._dev_rate_plant(drvTEMP,s.DVS)
-        
+
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # The function to calculate DVRF is applied to each element of s.DVSF
         DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
 
         msg = "Finished rate calculation for %s"
         self.logger.debug(msg % day)
-    
+
     def _dev_rate_plant(self, drvTEMP, sDVS):
         # Development rate of a plant (DVR) depends on daily mean temperature (drv.TEMP) and plant age (DVS).
         # DVR was called as "Flowering rate (FR)" in De Koning (1994, Ph.D. thesis), and the equation of FR was as follows (p.42 [eqn 3.2.3] in De Koning (1994, Ph.D. thesis)):
@@ -97,7 +92,7 @@ class DVS_Phenology(SimulationObject):
     def _dev_rate_fruit(self,drvTEMP, sDVSF):
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # De Koning (1994, Ph.D. thesis) (and Heuvelink (1996, Annals of Botany)) used the following equation for DVRF. It described fruit growth period in cv. Counter quite well (unpublished research, Heuvelink, 1996).
-        if sDVSF == None: 
+        if sDVSF == None:
             rDVRF = None
         else:
             rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
@@ -111,7 +106,7 @@ class DVS_Phenology(SimulationObject):
         s = self.states
         k = self.kiosk
         #回しすぎると超える？
-        
+
         k.DVSF = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], k.DVSF, k.DVRF))
 
         # 1) Add the flower anthesis after the 2nd flower
@@ -150,7 +145,7 @@ class DVS_Phenology(SimulationObject):
             for j in range(0,3):
                 if s.DOEL[i][j] == None:
                     s.DOEL[i][j] = day
-        i = int(s.DVS) + 3 
+        i = int(s.DVS) + 3
         if s.DOEL[i][0] == None:
             s.DOEL[i][0] = day
         if s.DOEL[i][1] == None and nLEAF >= 2:

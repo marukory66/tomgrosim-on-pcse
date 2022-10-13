@@ -20,7 +20,7 @@ from storage_organ_dynamics import TOMGROSIM_Storage_Organ_Dynamics as Storage_O
 #%%
 # class Tomgrosim(SimulationObject):
 class Tomgrosim(SimulationObject):
-    
+
     # sub-model components for crop simulation
     pheno = Instance(SimulationObject)
     part  = Instance(SimulationObject)
@@ -29,20 +29,19 @@ class Tomgrosim(SimulationObject):
     st_dynamics = Instance(SimulationObject)
     ro_dynamics = Instance(SimulationObject)
     so_dynamics = Instance(SimulationObject)
-    
+
     class Parameters(ParamTemplate):
         CVL = Float(-99.)
         CVO = Float(-99.)
         CVR = Float(-99.)
         CVS = Float(-99.)
+        DMII = Float(-99.)
+        GASSL = Instance(list)
 
     class StateVariables(StatesTemplate):
         TDM  = Float(-99.) # Total living plant dry mass
         GASST = Float(-99.)
         MREST = Float(-99.)
-        CTRAT = Float(-99.)
-        CEVST = Float(-99.)
-        HI = Float(-99.)
         DOF = Instance(datetime.date)
         FINISH_TYPE = Unicode(allow_none=True)
         ASA = Float(-99.) # Assimilate pool
@@ -55,10 +54,10 @@ class Tomgrosim(SimulationObject):
         GASS = Float(-99.)
         MRES = Float(-99.)
         ASRC = Float(-99.)
-        
+
     class RateVariables(RatesTemplate):
         pass
-        
+
     def initialize(self, day, kiosk, parvalues):
         print("aaa",vars(parvalues))
         print("tomgrosim.py")
@@ -72,41 +71,49 @@ class Tomgrosim(SimulationObject):
         self.so_dynamics = Storage_Organ_Dynamics(day, kiosk, parvalues)
         self.lv_dynamics = Leaf_Dynamics(day, kiosk, parvalues)
 
+        # Initial total (living) above-ground biomass of the crop
+        TDM = self.kiosk.WLV + self.kiosk.WST + self.kiosk.WSO + self.kiosk.WRO
+        DMII = 0.2*TDM
+        # TDM = self.kiosk.TWLV + 1 + self.kiosk.TWSO
 
-        # TDM = self.kiosk.TWLV + self.kiosk.TWST + self.kiosk.TWSO
-        TDM = self.kiosk.TWLV + 1 + self.kiosk.TWSO
+
+        # list_RGRL = [[0 for i in range(3)] for j in range(20)]
+        # RGRL = list_RGRL
+        # CVF = None
+        # DMI = DMI
+        # DMI = kiosk.DMII
+        # kiosk.DMII = 1
+
+        # DMA = None
+        # GASS = 0
+        # MRES = 0
+        # ASRC = 0
 
 
-        list_RGRL = [[0 for i in range(3)] for j in range(20)]
-        RGRL = list_RGRL
-        CVF = 0.0
-        DMI = 1.0
-        DMA = 0.0
-        GASS = 0
-        MRES = 0
-        ASRC = 0
-        
-        
         self.states = self.StateVariables(kiosk,
-                                          publish=["CVF","DMI","RGRL","TDM", "GASST", "MREST", "HI", "ASA", "AF", "CAF","DMA"],
-                                          CVF=CVF,DMI=DMI,RGRL=RGRL,DMA=DMA,GASS=GASS,MRES=MRES,ASRC=ASRC,
+                                          publish=["CVF","DMI","RGRL","TDM", "GASST", "MREST",  "ASA", "AF", "CAF","DMA"],
+                                          CVF=None,DMI=DMII,RGRL=[],DMA=None,MRES=None,ASRC=None,GASS = None,
                                           TDM=TDM, GASST=0.0, MREST=0.0,
-                                          CTRAT=0.0, CEVST=0.0, HI=0.0,
-                                          DOF=None, FINISH_TYPE=None, 
-                                          ASA=0.0, AF=0.0, CAF=1.0)
+                                          DOF=None, FINISH_TYPE=None,
+                                          ASA=0.0, AF=None, CAF=1.0)
 
         self._connect_signal(self._on_CROP_FINISH, signal=signals.crop_finish)
-        
+
     @prepare_rates
     def calc_rates(self, day, drv):
-        
+
         p = self.params
         r = self.rates
         k = self.kiosk
         self.pheno.calc_rates(day,drv)
         # Potential assimilation
-        # 以下は実際の積算光合成量を直接使用 
+        # 以下は実際の日積算光合成量を直接使用
         # k.GASS = self.assim(day, drv) + k.ASA
+        # dayに対応する数値を取得
+        def fun_gass(day):
+            # dayに対応する数値をGASSLから取得
+            pass
+        # k.GASS = fun_gass(day) + k.ASA
         k.GASS = 1
         # Respiration
         PMRES = self.mres(day, drv)
@@ -114,7 +121,6 @@ class Tomgrosim(SimulationObject):
         # Net available assimilates
         k.ASRC  = k.GASS - k.MRES
         # Potential growth rate
-        self.so_dynamics.calc_potential(day, drv)
         self.so_dynamics.calc_potential(day, drv)
         self.lv_dynamics.calc_potential(day, drv)
 
@@ -145,8 +151,8 @@ class Tomgrosim(SimulationObject):
 
         # Assimilate pool (ASA)
         # All sinks derive their assimilates for growth from one common assimilate pool. (Heuvelink, 1996, Ph.D. thesis, p. 239 (Chapter 6.1))
-        k.TPGR = 1
-        k.DMA = 2
+        # k.TPGR = 1
+        # k.DMA = 2
         if k.DMA <= k.TPGR:
             k.DMI = k.DMA
             s.ASA = 0
@@ -162,16 +168,16 @@ class Tomgrosim(SimulationObject):
         # 0 < CAF <= 1, initial CAF = 1
         k.TMPGR = 1
         s.AF = (k.DMA - k.TPGR) / k.TMPGR
-        if s.AF < -0.03: 
+        if s.AF < -0.03:
             s.AF = -0.03
         elif s.AF > 0.03:
             s.AF = 0.03
         s.CAF += s.AF
-        if s.CAF < 0.01: 
+        if s.CAF < 0.01:
             s.CAF = 0.01
         elif s.CAF >= 1.00:
             s.CAF = 1.00
- 
+
         # Integrate states on leaves, storage organs, stems and roots
         self.ro_dynamics.integrate(day, delt)
         self.so_dynamics.integrate(day, delt)
@@ -179,17 +185,17 @@ class Tomgrosim(SimulationObject):
         self.lv_dynamics.integrate(day, delt)
 
         # Total living plant dry mass
-        s.TDM = k.TWLV + 1 + k.TWSO + 1
-        # s.TDM = k.TWLV + k.TWST + k.TWSO + k.TWRO
+        # s.TDM = k.TWLV + 1 + k.TWSO + 1
+        s.TDM = k.WLV + k.WST + k.WSO + k.WRO
 
 
-        # total gross assimilation and maintenance respiration 
+        # total gross assimilation and maintenance respiration
         s.GASST += k.GASS
         s.MREST += k.MRES
-        
+
     @prepare_states
     def finalize(self, day):
-        
+
         SimulationObject.finalize(self, day)
 
     def _on_CROP_FINISH(self, day, finish_type=None):
