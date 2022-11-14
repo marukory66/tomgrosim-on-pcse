@@ -250,7 +250,7 @@ yaml_agro = """
         - 2006-08-05: {amount:  5, efficiency: 0.7}
     StateEvents: null
 """
-weatherfile = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/nl1.xlsx")
+weatherfile = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/nl1.xls")
 weatherdataprovider = ExcelWeatherDataProvider(weatherfile)
 agromanagement = yaml.load(yaml_agro,Loader=yaml.Loader)
 wofost = sample(parameterprovider, weatherdataprovider, agromanagement)

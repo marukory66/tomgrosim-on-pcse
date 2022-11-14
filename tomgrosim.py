@@ -59,11 +59,11 @@ class Tomgrosim(SimulationObject):
         pass
 
     def initialize(self, day, kiosk, parvalues):
-        print("aaa",vars(parvalues))
+        # print("aaa",vars(parvalues))
         print("tomgrosim.py")
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
-        self.pheno = Phenology(day, kiosk)
+        self.pheno = Phenology(day, kiosk, parvalues)
         self.part = Partitioning(day, kiosk, parvalues)
         self.mres = MaintenanceRespiration(day, kiosk, parvalues)
         self.ro_dynamics = Root_Dynamics(day, kiosk, parvalues)
@@ -76,18 +76,6 @@ class Tomgrosim(SimulationObject):
         DMII = 0.2*TDM
         # TDM = self.kiosk.TWLV + 1 + self.kiosk.TWSO
 
-
-        # list_RGRL = [[0 for i in range(3)] for j in range(20)]
-        # RGRL = list_RGRL
-        # CVF = None
-        # DMI = DMI
-        # DMI = kiosk.DMII
-        # kiosk.DMII = 1
-
-        # DMA = None
-        # GASS = 0
-        # MRES = 0
-        # ASRC = 0
 
 
         self.states = self.StateVariables(kiosk,
@@ -107,7 +95,8 @@ class Tomgrosim(SimulationObject):
         k = self.kiosk
         self.pheno.calc_rates(day,drv)
         # Potential assimilation
-        # 以下は実際の日積算光合成量を直接使用
+        # 以下は実際の
+        # を直接使用
         # k.GASS = self.assim(day, drv) + k.ASA
         # dayに対応する数値を取得
         def fun_gass(day):
@@ -134,6 +123,11 @@ class Tomgrosim(SimulationObject):
         # RGRL is the list of RGRs
         RGR = k.DMI / k.TDM
         k.RGRL.insert(0, RGR)
+
+        self.states = self.StateVariables(kiosk,
+                                          publish=["RGR"],
+                                           RGR=RGR)
+
 
         self.ro_dynamics.calc_rates(day, drv)
         self.st_dynamics.calc_rates(day, drv)

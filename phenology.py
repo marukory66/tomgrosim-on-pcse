@@ -42,11 +42,12 @@ class DVS_Phenology(SimulationObject):
         DVR     = Float(-99.)  # development rate of a plant
         DVRF    = Instance(list)  # development rate of fruits
 
-    def initialize(self, day, kiosk):
+    def initialize(self, day, kiosk, parvalues):
         self.kiosk = kiosk
         self._connect_signal(self._on_CROP_FINISH, signal=signals.crop_finish)
 
-
+        self.params = self.Parameters(parvalues)
+        # print(self.params)
         DVS = self.params.DVSI
         DVSF = self.params.DVSFI
         DOEL = self.params.DOELI
@@ -73,8 +74,12 @@ class DVS_Phenology(SimulationObject):
 
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # The function to calculate DVRF is applied to each element of s.DVSF
+        # DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
+        # [list(map(lambda x: print(x), row)) for row in k.DVSF]
+        # DVRF =  [(print(row)) for row in k.DVSF]
+   
         DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
-
+    
         msg = "Finished rate calculation for %s"
         self.logger.debug(msg % day)
 
@@ -95,6 +100,7 @@ class DVS_Phenology(SimulationObject):
         if sDVSF == None:
             rDVRF = None
         else:
+            # rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
             rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
         return(rDVRF)
 

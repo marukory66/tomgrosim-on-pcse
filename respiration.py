@@ -31,7 +31,7 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         self.params = self.Parameters(parvalues)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
-        self.states = self.StateVariables(kiosk,publish=[RGR],RGR=None)
+        # self.states = self.StateVariables(kiosk,publish=[RGR],RGR=None)
         self.rates = self.RateVariables(kiosk)
 
 
@@ -50,6 +50,7 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         # The correction by RGR is similar to the correction for senescence using RFSETB as RMRES *= p.RFSETB(kk["DVS"])
         # RGR is list object made in wofost.py. Calculate averaged RGR for the last 1 week = average of the first 7 RGRs in the list.
 
-        kk.RGR = sum(kk.RGRL[0:6]) / len(kk.RGRL[0:6])
+        # kk.RGR = sum(kk.RGRL[0:6]) / len(kk.RGRL[0:6])
+        kk.RGR = 1.0
         kk.PMRES = RMRES * TEFF * (1 - exp(-p.COEFRGR * kk.RGR))
         return kk.PMRES

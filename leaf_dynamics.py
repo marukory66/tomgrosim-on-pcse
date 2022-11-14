@@ -18,7 +18,7 @@ import os
 import pandas as pd
 #　datetimeをimportしたい
 # from datetime import date
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta,data
 import numpy as np
 #%%
 class TOMGROSIM_Leaf_Dynamics(SimulationObject):
@@ -77,10 +77,10 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         for i in range(0, len(LV)):
             for j in range(0, len(LV[i])):
                 if DOHL[i][j] != None: # Harvested = Dead
-                    DWLV += LV[i][j]
+                    DWLV += float(LV[i][j])
                 else: # Not harvested yet = living
-                    WLV += LV[i][j]
-                    LAI += LA[i][j]
+                    WLV += float(LV[i][j])
+                    LAI += float(LA[i][j])
         TWLV = WLV + DWLV
 
         # Initialize StateVariables object
@@ -107,8 +107,15 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         for i in range(0, len(k.DOEL)):
             for j in range(0, len(k.DOEL[i])):
                 if k.DOEL[i][j] != None:
-                    age_days = day - k.DOEL[i][j]
-                    k.LVAGE[i][j] = k.DOEL[i][j]
+                    print(type(k.DOEL[i][j]))
+                    print(type(day))
+                    tdatetime = datetime.strptime(k.DOEL[i][j], '%Y-%m-%d')
+                    tdate = date(tdatetime.year, tdatetime.month, tdatetime.day)
+                    age_days = day - tdate
+                    # age_days = day - k.DOEL[i][j]
+                    print(type(k.DOEL[i][j]))
+                    print(type(day))
+                    k.LVAGE[i][j] = age_days
                 else:
                     k.LVAGE[i][j] = 0
 

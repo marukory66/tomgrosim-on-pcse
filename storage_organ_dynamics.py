@@ -69,17 +69,18 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
             # for j in range(0, len(FD[i])):
             for j in range(0, len(FD[i])):
                 if DOHF[i][j] != None: # Harvested = Dead
-                    DWSO += FD[i][j] # Cumulative yield (dry mass)
-                    YWSO += FF[i][j] # Cumulative yield (fresh mass)
+                    DWSO += float(FD[i][j]) # Cumulative yield (dry mass)
+                    YWSO += float(FF[i][j]) # Cumulative yield (fresh mass)
                 else: # Not harvested yet = living
                     WSO += FD[i][j]
         TWSO = WSO + DWSO # Total dry mass of fruits (both living and dead)
         self.states = self.StateVariables(kiosk, publish=["FD","DMC","FF","DOHF","WSO","DWSO","YWSO","TWSO","GRFR","PGRFR","MPGRFR","SDMC","FRAGE"],
-                                          FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,GRFR=[], GRFRF=[], PGRFR=[], MPGRFR=[], SDMC=SDMC, FRAGE=FRAGE,
+                                          FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,GRFR=[], GRFRF=[], PGRFR=[], MPGRFR=[], SDMC=None, FRAGE=[],
                                           WSO=WSO, DWSO=DWSO, YWSO=YWSO, TWSO=TWSO)
         self.rates = self.RateVariables(kiosk)
     @prepare_rates
     def calc_potential(self,  day, drv):
+
 
         k = self.kiosk
         r = self.rates
@@ -113,14 +114,15 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         # The cumulative adaptation factor (CAF) is a state variable calculated in wofost.py
         k.PGRFR = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRFR]
 
-        # Structural DMC (sDMC)
-        k.SDMC = p.SDMC
 
     @prepare_rates
     def calc_rates(self, day, drv):
         r = self.rates
         p = self.params
         k = self.kiosk
+
+        # Structural DMC (sDMC)
+        k.SDMC = p.SDMC
 
         k.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR)
         k.GRFRF = [list(map(lambda x: x / k.SDMC, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase

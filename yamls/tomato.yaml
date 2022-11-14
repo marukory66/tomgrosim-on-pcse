@@ -13,474 +13,674 @@
 #
 Version: 1.0.0
 CropParameters:
-    GenericC3: &GenericC3
-        CO2EFFTB:
-         - [40., 0.00,
-           360., 1.00,
-           720., 1.11,
-          1000., 1.11,
-          2000., 1.11]
-         - multiplication factor for EFF to account for an increasing CO2 concentration
-         - ['PPM', '-']
-        CO2TRATB:
-         - [40., 0.00,
-           360., 1.00,
-           720., 0.9,
-          1000., 0.9,
-          2000., 0.9]
-         - multiplication factor for maximum transpiration rate TRAMX to account for an increasing CO2 concentration
-         - ['PPM', '-']
-        CO2AMAXTB:
-         - [40.,  0.00,
-           360.,  1.00,
-           720.,  1.60,
-           1000., 1.90,
-           2000., 1.90]
-         - multiplication factor for AMAX to account for an increasing CO2 concentration
-         - ['PPM', '-']
-    GenericC4: &GenericC4
-        CO2EFFTB:
-         - [40., 0.00,
-           360., 1.00,
-           720., 1.00,
-          1000., 1.00,
-          2000., 1.00]
-         - multiplication factor for EFF to account for an increasing CO2 concentration
-         - ['PPM', '-']
-        CO2TRATB:
-         - [40., 0.00,
-           360., 1.00,
-           720., 0.74,
-          1000., 0.74,
-          2000., 0.74]
-         - multiplication factor for maximum transpiration rate TRAMX to account for an increasing CO2 concentration
-         - ['PPM', '-']
-        CO2AMAXTB:
-         - [40.,  0.00,
-           360.,  1.00,
-           720.,  1.00,
-           1000., 1.00,
-           2000., 1.00]
-         - multiplication factor for AMAX to account for an increasing CO2 concentration
-         - ['PPM', '-']
-    EcoTypes:
-        tomato: &tomato
-            <<: *GenericC3
-            TBASEM:
-            -  3.0
-            - Lower threshold temperature for emergence
-            - lower threshold temp. for emergence cel
-            - ['C']
-            TEFFMX:
-            - 20.0
-            - maximum effective temperature for emergence
-            - max. eff. temp. for emergence cel
-            - ['C']
-            TSUMEM:
-            -  90
-            - temperature sum from sowing to emergence
-            - temperature sum from sowing to emergence cel d
-            - ['C.d']
+  GenericC3: &GenericC3
+    CO2EFFTB:
+    - [40., 0.00, 360., 1.00, 720., 1.11, 1000., 1.11, 2000., 1.11]
+    - multiplication factor for EFF to account for an increasing CO2 concentration
+    - [PPM, '-']
+    CO2TRATB:
+    - [40., 0.00, 360., 1.00, 720., 0.9, 1000., 0.9, 2000., 0.9]
+    - multiplication factor for maximum transpiration rate TRAMX to account for an
+      increasing CO2 concentration
+    - [PPM, '-']
+    CO2AMAXTB:
+    - [40., 0.00, 360., 1.00, 720., 1.60, 1000., 1.90, 2000., 1.90]
+    - multiplication factor for AMAX to account for an increasing CO2 concentration
+    - [PPM, '-']
+  GenericC4:
+    CO2EFFTB:
+    - [40., 0.00, 360., 1.00, 720., 1.00, 1000., 1.00, 2000., 1.00]
+    - multiplication factor for EFF to account for an increasing CO2 concentration
+    - [PPM, '-']
+    CO2TRATB:
+    - [40., 0.00, 360., 1.00, 720., 0.74, 1000., 0.74, 2000., 0.74]
+    - multiplication factor for maximum transpiration rate TRAMX to account for an
+      increasing CO2 concentration
+    - [PPM, '-']
+    CO2AMAXTB:
+    - [40., 0.00, 360., 1.00, 720., 1.00, 1000., 1.00, 2000., 1.00]
+    - multiplication factor for AMAX to account for an increasing CO2 concentration
+    - [PPM, '-']
+  EcoTypes:
+    tomato: &tomato
+      <<: *GenericC3
+      TBASEM:
+      - 3.0
+      - Lower threshold temperature for emergence
+      - lower threshold temp. for emergence cel
+      - [C]
+      TEFFMX:
+      - 20.0
+      - maximum effective temperature for emergence
+      - max. eff. temp. for emergence cel
+      - [C]
+      TSUMEM:
+      - 90
+      - temperature sum from sowing to emergence
+      - temperature sum from sowing to emergence cel d
+      - [C.d]
             #
             # PHENOLOGICAL DEVELOPMENT
             #
-            IDSL:
-            -  0
-            - indicates whether pre-anthesis development depends on temperature (=0), plus daylength (=1) , plus vernalization (=2)
-            - indicates whether pre-beet growth development depends
-            - ['NA']
-            DLO:
-            - -99.0
-            - optimum daylength for development
-            - optimum daylength for development hr
-            - ['hr']
-            DLC:
-            - -99.0
-            - critical daylength (lower threshold)
-            - optimum daylength for development hr
-            - ['hr']
-            TSUM1:
-            - 650
-            - temperature sum from emergence to anthesis
-            - temp. sum from emergence to init. beet growth cel d
-            - ['C.d']
-            TSUM2:
-            - 1400
-            - temperature sum from anthesis to maturity
-            - temp. sum from init. beet growth to maturity cel d
-            - ['C.d']
-            DTSMTB:
-            - 0
-            - daily increase in temperature sum as function of daily average temperature
-            - daily increase in temp. sum as function of av. temp. cel; cel d
-            - ['C', 'C']
-            DVSI:
-            -  0.0
-            - Initial development stage
-            - initial DVS
-            - ['-']
+      IDSL:
+      - 0
+      - indicates whether pre-anthesis development depends on temperature (=0), plus
+        daylength (=1) , plus vernalization (=2)
+      - indicates whether pre-beet growth development depends
+      - [NA]
+      DLO:
+      - -99.0
+      - optimum daylength for development
+      - optimum daylength for development hr
+      - [hr]
+      DLC:
+      - -99.0
+      - critical daylength (lower threshold)
+      - optimum daylength for development hr
+      - [hr]
+      TSUM1:
+      - 650
+      - temperature sum from emergence to anthesis
+      - temp. sum from emergence to init. beet growth cel d
+      - [C.d]
+      TSUM2:
+      - 1400
+      - temperature sum from anthesis to maturity
+      - temp. sum from init. beet growth to maturity cel d
+      - [C.d]
+      DTSMTB:
+      - 0
+      - daily increase in temperature sum as function of daily average temperature
+      - daily increase in temp. sum as function of av. temp. cel; cel d
+      - [C, C]
+      DVSI:
+      - 0.0
+      - Initial development stage
+      - initial DVS
+      - ['-']
             # initial
-            DVSEND:
-            -  2.0
-            - development stage at harvest (= 2.0 at maturity)
-            - development stage at harvest (in this case a dummy)
-            - ['-']
+      DVSEND:
+      - 2.0
+      - development stage at harvest (= 2.0 at maturity)
+      - development stage at harvest (in this case a dummy)
+      - ['-']
             #TDWI:
             #-   0.51
             #- initial total crop dry weight
             #- initial total crop dry weight kg ha-1
             #- ['kg.ha-1']
-            LAIEM:
-            - 0.0007
-            - leaf area index at emergence ha ha-1
-            RGRLAI:
-            - 0.016
-            - maximum relative increase in LAI
-            - maximum relative increase in LAI ha ha-1 d-1
-            - ['d-1']
+      LAIEM:
+      - 0.0007
+      - leaf area index at emergence ha ha-1
+      RGRLAI:
+      - 0.016
+      - maximum relative increase in LAI
+      - maximum relative increase in LAI ha ha-1 d-1
+      - [d-1]
             # green area
-            SLATB:
-            - [0.00, 0.0020,
-               2.00, 0.0020]
-            - specific leaf area as a function of DVS
-            - specific leaf area as a function of DVS -; ha kg-1
-            - ['-', 'ha.kg-1']
-            SPA:
-            - 0.0000
-            - specific pod area
-            - life span of leaves growing at 35 Celsius d
-            - ['ha.kg-1']
-            SSATB:
-            - [0.00, 0.0000,
-               2.00, 0.0000]
-            - specific stem area as function of DVS
-            - specific stem area ha kg-1  as function of DVS
-            - ['-', 'ha.kg-1']
-            TBASE:
-            -  3.0
-            - lower threshold temperature for ageing of leaves
-            - lower threshold temp. for ageing of leaves cel
-            - ['C']
-            SLAMAX:
-            - 0.075
-            - Maximum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            SLAMIN:
-            - 0.024
-            - Minimum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            BETAT:
-            - 0.085
-            - Correction coefficient of temperature for SLA K-1 (Jones et al., 1991, Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            BETAC:
-            - 0.00085
-            - Correction coefficient of temperature for SLA mol µmol-1 (Jones et al., 1991, Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POLA:
-            - 0.104
-            - Gompertz parameter a for potential leaf expansion rate, equals to the potential maximum leaf area m2 (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POLB:
-            - 0.136
-            - Gompertz parameter b for potential leaf expansion rate (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POLC:
-            - 13.6
-            - Gompertz parameter c for potential leaf expansion rate (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            FRPET:
-            - 0.435
-            -  Petiole potential growth rate relative to total leaf potential growth rate
+      SLATB:
+      - [0.00, 0.0020, 2.00, 0.0020]
+      - specific leaf area as a function of DVS
+      - specific leaf area as a function of DVS -; ha kg-1
+      - ['-', ha.kg-1]
+      SPA:
+      - 0.0000
+      - specific pod area
+      - life span of leaves growing at 35 Celsius d
+      - [ha.kg-1]
+      SSATB:
+      - [0.00, 0.0000, 2.00, 0.0000]
+      - specific stem area as function of DVS
+      - specific stem area ha kg-1  as function of DVS
+      - ['-', ha.kg-1]
+      TBASE:
+      - 3.0
+      - lower threshold temperature for ageing of leaves
+      - lower threshold temp. for ageing of leaves cel
+      - [C]
+      SLAMAX:
+      - 0.075
+      - Maximum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE)
+        and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      SLAMIN:
+      - 0.024
+      - Minimum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE)
+        and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      BETAT:
+      - 0.085
+      - Correction coefficient of temperature for SLA K-1 (Jones et al., 1991, Transaction
+        of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      BETAC:
+      - 0.00085
+      - Correction coefficient of temperature for SLA mol µmol-1 (Jones et al., 1991,
+        Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POLA:
+      - 0.104
+      - Gompertz parameter a for potential leaf expansion rate, equals to the potential
+        maximum leaf area m2 (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POLB:
+      - 0.136
+      - Gompertz parameter b for potential leaf expansion rate (Heuvelink and Bertin,
+        1994, J. Hort. Sci.)
+      POLC:
+      - 13.6
+      - Gompertz parameter c for potential leaf expansion rate (Heuvelink and Bertin,
+        1994, J. Hort. Sci.)
+      FRPET:
+      - 0.435
+      - Petiole potential growth rate relative to total leaf potential growth rate
             # storage organs
-            POFA:
-            - 3.0
-            - Richards parameter a for potential fruit growth, equals to the potential maximum dry mass of a fruit gDM (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POFB:
-            - 4.34
-            - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POFC:
-            - 0.278
-            - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            POFD:
-            - 1.31
-            - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994, J. Hort. Sci.)
-            SDMC:
-            - 0.08
-            - Structural dry matter content of fruit.
+      POFA:
+      - 3.0
+      - Richards parameter a for potential fruit growth, equals to the potential maximum
+        dry mass of a fruit gDM (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POFB:
+      - 4.34
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      POFC:
+      - 0.278
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      POFD:
+      - 1.31
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      SDMC:
+      - 0.08
+      - Structural dry matter content of fruit.
             # assimilation
-            KDIFTB:
-            - [0.00, 0.690,
-               2.00, 0.690]
-            - extinction coefficient for diffuse visible light as function of DVS
-            - extinction coefficient for diffuse visible light - as function of DVS
-            - ['-', '-']
-            EFFTB:
-            - [ 0.0, 0.450,
-               40.0, 0.450]
-            - initial light-use efficiency single leaf as function of daily mean temperature
-            - light-use effic. single leaf kg ha-1 hr-1 j-1 m2 s as function of daily mean temp.
-            - ['C', 'kg.ha-1.hr-1.J-1.m2.s1']
-            AMAXTB:
-            - [ 0.00, 22.50,
-                1.00, 45.00,
-                1.13, 45.00
-                1.80, 36.00,
-                2.00, 36.00]
-            - maximum leaf CO2 assimilation rate as function of DVS
-            - max. leaf CO2 assim. rate
-            - ['-', 'kg.ha-1.hr-1']
-            TMPFTB:
-            - [ 0.00,    0.01,
-                3.00,    0.01,
-                10.00,    0.80,
-                15.00,    1.00,
-                20.00,    1.00,
-                30.00,    0.95,
-                35.00,    0.83,
-                40.00,    0.60]
-            - reduction factor of AMAX as function of average daily temperature
-            - reduction factor of AMAX as function of av. temp. cel; -
-            - ['C', '-']
-            TMNFTB:
-            - [ 0.0, 0.000,
-                3.0, 1.000]
-            - reduction factor of gross assimlation rate as function of low minimum temperature
-            - red. factor of gross assim. rate as function of low min. temp. cel; -
-            - ['C', '-']
+      KDIFTB:
+      - [0.00, 0.690, 2.00, 0.690]
+      - extinction coefficient for diffuse visible light as function of DVS
+      - extinction coefficient for diffuse visible light - as function of DVS
+      - ['-', '-']
+      EFFTB:
+      - [0.0, 0.450, 40.0, 0.450]
+      - initial light-use efficiency single leaf as function of daily mean temperature
+      - light-use effic. single leaf kg ha-1 hr-1 j-1 m2 s as function of daily mean
+        temp.
+      - [C, kg.ha-1.hr-1.J-1.m2.s1]
+      AMAXTB:
+      - [0.00, 22.50, 1.00, 45.00, 1.13, 45.00 1.80, 36.00, 2.00, 36.00]
+      - maximum leaf CO2 assimilation rate as function of DVS
+      - max. leaf CO2 assim. rate
+      - ['-', kg.ha-1.hr-1]
+      TMPFTB:
+      - [0.00, 0.01, 3.00, 0.01, 10.00, 0.80, 15.00, 1.00, 20.00, 1.00, 30.00, 0.95,
+        35.00, 0.83, 40.00, 0.60]
+      - reduction factor of AMAX as function of average daily temperature
+      - reduction factor of AMAX as function of av. temp. cel; -
+      - [C, '-']
+      TMNFTB:
+      - [0.0, 0.000, 3.0, 1.000]
+      - reduction factor of gross assimlation rate as function of low minimum temperature
+      - red. factor of gross assim. rate as function of low min. temp. cel; -
+      - [C, '-']
             # conversion of assimilates into biomass
-            CVL:
-            - 0.720
-            - OK efficiency of conversion into leaves
-            - efficiency of conversion into leaves kgDM kgCH2O-1  It is the same value with that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['mass.mass-1']
-            CVO:
-            - 0.730
-            - ok efficiency of conversion into storage organs
-            - efficiency of conversion into storage org. kgDM kgCH2O-1 for tomato (1/1.37; Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['mass.mass-1']
-            CVR:
-            - 0.720
-            - ok efficiency of conversion into roots
-            - efficiency of conversion into roots kgDM kgCH2O-1 It is the same value with that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['mass.mass-1']
-            CVS:
-            - 0.690
-            - ok efficiency of conversion into stems
-            - efficiency of conversion into stems kgDM kgCH2O-1 It is the same value with that for tomato (1/1.45; Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['mass.mass-1']
+      CVL:
+      - 0.720
+      - OK efficiency of conversion into leaves
+      - efficiency of conversion into leaves kgDM kgCH2O-1  It is the same value with
+        that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVO:
+      - 0.730
+      - ok efficiency of conversion into storage organs
+      - efficiency of conversion into storage org. kgDM kgCH2O-1 for tomato (1/1.37;
+        Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVR:
+      - 0.720
+      - ok efficiency of conversion into roots
+      - efficiency of conversion into roots kgDM kgCH2O-1 It is the same value with
+        that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVS:
+      - 0.690
+      - ok efficiency of conversion into stems
+      - efficiency of conversion into stems kgDM kgCH2O-1 It is the same value with
+        that for tomato (1/1.45; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
             # maintenance respiration
-            Q10:
-            -  2.00
-            - relative increase in respiration rate per 10 degrees Celsius temperature increase
-            - rel. incr. in resp. rate per 10 Cel temp. incr. - It is the same
-            - ['-']
-            RML:
-            - 0.0300
-            - relative maintenance respiration rate of leaves
-            - rel. maint. resp. rate leaves kg CH2O kg-1 d-1 It is the same value with that for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['d-1']
-            RMO:
-            - 0.0100
-            - relative maintenance respiration rate of storage organs
-            - rel. maint. resp. rate stor.org. kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['d-1']
-            RMR:
-            - 0.0100
-            - relative maintenance respiration rate of roots
-            - rel. maint. resp. rate roots kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['d-1']
-            RMS:
-            - 0.0150
-            - relative maintenance respiration rate of stems
-            - rel. maint. resp. rate stems kg CH2O kg-1 d-1 It is the same value with that for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
-            - ['d-1']
-            #RFSETB:
-            #- [0.00, 1.000,
-            #   2.00, 1.000]
-            #- reduction factor for senescence as function of DVS
-            #- red. factor for senescence as function of DVS -; -
-            #- ['-', '-']
-            COEFRGR:
-            - 33
-            - coefficient of correction by RGR (senescence) for maintenance respiration (Heuvelink, 1995, Annals of Botany)
+      Q10:
+      - 2.00
+      - relative increase in respiration rate per 10 degrees Celsius temperature increase
+      - rel. incr. in resp. rate per 10 Cel temp. incr. - It is the same
+      - ['-']
+      RML:
+      - 0.0300
+      - relative maintenance respiration rate of leaves
+      - rel. maint. resp. rate leaves kg CH2O kg-1 d-1 It is the same value with that
+        for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [d-1]
+      RMO:
+      - 0.0100
+      - relative maintenance respiration rate of storage organs
+      - rel. maint. resp. rate stor.org. kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink,
+        1993, J. Hort. Sci.)
+      - [d-1]
+      RMR:
+      - 0.0100
+      - relative maintenance respiration rate of roots
+      - rel. maint. resp. rate roots kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink,
+        1993, J. Hort. Sci.)
+      - [d-1]
+      RMS:
+      - 0.0150
+      - relative maintenance respiration rate of stems
+      - rel. maint. resp. rate stems kg CH2O kg-1 d-1 It is the same value with that
+        for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [d-1]
+      RFSETB:
+      - [0.00, 1.000, 2.00, 1.000]
+      - reduction factor for senescence as function of DVS
+      - red. factor for senescence as function of DVS -; -
+      - ['-', '-']
+      COEFRGR:
+      - 33
+      - coefficient of correction by RGR (senescence) for maintenance respiration
+        (Heuvelink, 1995, Annals of Botany)
             # partitioning
-            FRTB:
-            - [0.00,    0.20,
-               0.91,    0.29,
-               1.00,    0.30,
-               1.15,    0.15,
-               1.29,    0.09,
-               1.30,    0.09,
-               1.57,    0.08,
-               1.92,    0.01,
-               2.00,    0.02]
-            - fraction of total dry matter to roots as a function of DVS
-            - fraction of total dry matter to roots as a function of DVS -; kg kg-1
-            - ['-', 'mass.mass-1']
-            FLTB:
-            - [0.00,    0.85,
-               1.00,    0.50,
-               1.30,    0.05,
-               1.57,    0.05,
-               2.00,    0.05]
-            - fraction of total dry matter to leaves as a function of DVS
-            -  fraction of above-gr. DM to leaves
-            - ['-', 'mass.mass-1']
-            FSTB:
-            - [0.00,    0.15,
-               1.00,    0.50,
-               1.30,    0.10,
-               1.57,    0.10,
-               1.92,    0.05,
-               2.00,    0.05]
-            - fraction of total dry matter to stems as a function of DVS
-            - fraction of above-gr. DM to stems
-            - ['-', 'mass.mass-1']
-            FOTB:
-            - [0.00,    0.00,
-               1.00,    0.00,
-               1.30,    0.85,
-               1.57,    0.85,
-               1.92,    0.90,
-               2.00,    0.90]
-            - fraction of above-gr. DM to stor. org as a function of DVS -; kg kg-1
+      FRTB:
+      - [0.00, 0.20, 0.91, 0.29, 1.00, 0.30, 1.15, 0.15, 1.29, 0.09, 1.30, 0.09, 1.57,
+        0.08, 1.92, 0.01, 2.00, 0.02]
+      - fraction of total dry matter to roots as a function of DVS
+      - fraction of total dry matter to roots as a function of DVS -; kg kg-1
+      - ['-', mass.mass-1]
+      FLTB:
+      - [0.00, 0.85, 1.00, 0.50, 1.30, 0.05, 1.57, 0.05, 2.00, 0.05]
+      - fraction of total dry matter to leaves as a function of DVS
+      - fraction of above-gr. DM to leaves
+      - ['-', mass.mass-1]
+      FSTB:
+      - [0.00, 0.15, 1.00, 0.50, 1.30, 0.10, 1.57, 0.10, 1.92, 0.05, 2.00, 0.05]
+      - fraction of total dry matter to stems as a function of DVS
+      - fraction of above-gr. DM to stems
+      - ['-', mass.mass-1]
+      FOTB:
+      - [0.00, 0.00, 1.00, 0.00, 1.30, 0.85, 1.57, 0.85, 1.92, 0.90, 2.00, 0.90]
+      - fraction of above-gr. DM to stor. org as a function of DVS -; kg kg-1
             # death rates
-            PERDL:
-            - 1.00
-            - maximum relative death rate of leaves due to water stress
-            - max. rel. death rate of leaves due to water stress
-            - ['-']
-            RDRRTB:
-            - [0.00,    0.000,
-               1.50,    0.000,
-               1.5001,  0.020,
-               2.00,    0.020]
-            - Relative death rate of stems as a function of DVS
-            - rel. death rate of stems as a function of DVS -; kg kg-1 d-1
-            - ['-', 'kg.kg-1.d-1']
-            RDRSTB:
-            - [0.00,    0.000,
-             1.50,    0.000,
-             1.5001,  0.020,
-             2.00,    0.020]
-            - relative death rate of roots as a function of DVS
-            - rel. death rate of roots as a function of DVS -; kg kg-1 d-1
-            - ['-', 'kg.kg-1.d-1']
+      PERDL:
+      - 1.00
+      - maximum relative death rate of leaves due to water stress
+      - max. rel. death rate of leaves due to water stress
+      - ['-']
+      RDRRTB:
+      - [0.00, 0.000, 1.50, 0.000, 1.5001, 0.020, 2.00, 0.020]
+      - Relative death rate of stems as a function of DVS
+      - rel. death rate of stems as a function of DVS -; kg kg-1 d-1
+      - ['-', kg.kg-1.d-1]
+      RDRSTB:
+      - [0.00, 0.000, 1.50, 0.000, 1.5001, 0.020, 2.00, 0.020]
+      - relative death rate of roots as a function of DVS
+      - rel. death rate of roots as a function of DVS -; kg kg-1 d-1
+      - ['-', kg.kg-1.d-1]
             # water use
-            CFET:
-            - 1.00
-            - correction factor transpiration rate
-            - correction factor transpiration rate
-            - ['-']
-            DEPNR:
-            - 2.00
-            - crop group number for soil water depletion
-            - crop group number for soil water depletion
-            - ['-']
-            IAIRDU:
-            -  0
-            - air ducts in roots present (=1) or not (=0)
-            - air ducts in roots present (=1) or not (=0)
-            - ['NA']
-            IOX:
-            -  0
-            - Oxygen stress effect enabled (=1) or not (=0)
-            - No oxygen stress
-            - ['NA']
+      CFET:
+      - 1.00
+      - correction factor transpiration rate
+      - correction factor transpiration rate
+      - ['-']
+      DEPNR:
+      - 2.00
+      - crop group number for soil water depletion
+      - crop group number for soil water depletion
+      - ['-']
+      IAIRDU:
+      - 0
+      - air ducts in roots present (=1) or not (=0)
+      - air ducts in roots present (=1) or not (=0)
+      - [NA]
+      IOX:
+      - 0
+      - Oxygen stress effect enabled (=1) or not (=0)
+      - No oxygen stress
+      - [NA]
             # rooting
-            RDI:
-            -  10.0
-            - initial rooting depth
-            - initial rooting depth cm
-            - ['cm']
-            RRI:
-            - 1.20
-            - maximum daily increase in rooting depth
-            - maximum daily increase in rooting depth cm d-1
-            - ['cm.d-1']
-            RDMCR:
-            - 150.0
-            - maximum rooting depth
-            - maximum rooting depth cm
-            - ['cm']
+      RDI:
+      - 10.0
+      - initial rooting depth
+      - initial rooting depth cm
+      - [cm]
+      RRI:
+      - 1.20
+      - maximum daily increase in rooting depth
+      - maximum daily increase in rooting depth cm d-1
+      - [cm.d-1]
+      RDMCR:
+      - 150.0
+      - maximum rooting depth
+      - maximum rooting depth cm
+      - [cm]
             # nutrients
             # maximum and minimum concentrations of N, P, and K
             # in storage organs        in vegetative organs kg kg-1
-            NMINSO:
-            - 0.0060
-            NMINVE:
-            - 0.0180
-            NMAXSO:
-            - 0.0130
-            - maximum P concentration in storage organs [kg N kg-1 dry biomass]
-            NMAXVE:
-            - 0.0280
-            PMINSO:
-            - 0.0008
-            PMINVE:
-            - 0.0015
-            PMAXSO:
-            - 0.0018
-            - maximum P concentration in storage organs [kg P kg-1 dry biomass]
-            PMAXVE:
-            - 0.0032
-            KMINSO:
-            - 0.0060
-            KMINVE:
-            - 0.0180
-            KMAXSO:
-            - 0.0130
-            - maximum K concentration in storage organs [kg K kg-1 dry biomass]
-            KMAXVE:
-            - 0.0360
-            YZERO:
-            - 0.
-            NFIX:
-            -  0.00
+      NMINSO:
+      - 0.0060
+      NMINVE:
+      - 0.0180
+      NMAXSO:
+      - 0.0130
+      - maximum P concentration in storage organs [kg N kg-1 dry biomass]
+      NMAXVE:
+      - 0.0280
+      PMINSO:
+      - 0.0008
+      PMINVE:
+      - 0.0015
+      PMAXSO:
+      - 0.0018
+      - maximum P concentration in storage organs [kg P kg-1 dry biomass]
+      PMAXVE:
+      - 0.0032
+      KMINSO:
+      - 0.0060
+      KMINVE:
+      - 0.0180
+      KMAXSO:
+      - 0.0130
+      - maximum K concentration in storage organs [kg K kg-1 dry biomass]
+      KMAXVE:
+      - 0.0360
+      YZERO:
+      - 0.
+      NFIX:
+      - 0.00
             # max. amount veg. organs at zero yield kg ha-1
             # fraction of N-uptake from biol. fixation kg kg-1
             # add parameter
-            DMV:
-            - 0
-            DMI:
-            - 0
-            PD:
-            - 0
-            ROI:
-            - 0
-            STI:
-            - 0
-            TDWI:
-            - 0.51
-            FDI:
-            -  [0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0]
-            DMCI:
-            -  [1, 1,
-               1, 1,
-               1, 1,
-               1, 1,
-               1, 1,
-               1, 1]
-            FFI:
-            -  [0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0
-               0.0, 0.0]
-            DOHFI:
-            -  [0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0,
-               0.0, 0.0]
-            sample2:
-               - [[2,3],[2,3]]
+      DMV:
+      - 0
+      DMI:
+      - 0
+      DMII:
+      - 1
+      PD:
+      - 0
+      ROI:
+      - 0
+      STI:
+      - 0
+      TDWI:
+      - 0.51
+      FDI:
+      - [[0.000203862009073, 7.46998419558868e-05, 0.0, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan]]
+      DMCI:
+      - [[0.08, 0.08, 0.08, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan,
+          nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [
+          nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan]]
+      FFI:
+      - [[0.0017262371295096, 0.0005335702996849, 0.0, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan]]
+      DOHFI:
+      - [[nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan]]
+      RGRL:
+      - [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      sample1:
+      - [0, 0, 0]
+      sample2:
+      - [[2, 3], [2, 3]]
             #追加20221011
-    Varieties:
-        tomato_01:
-            <<: *tomato
-            a:
-            - 0
-            - a
-            - ['C.d']
+      GASSL:
+      - [2006-03-31: 400, 2006-04-01: 400, 2006-04-02: 400, 2006-04-03: 400, 2006-04-04: 400,
+        2006-04-05: 400]
+#{'key1': 'value', 'key2': 'valuess'}
+      DOEFI:
+      - [['2022-03-24', '2022-03-25', '2022-03-26', nan, nan, nan], [nan, nan, nan,
+          nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [
+          nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan]]
+      DOELI:
+      - [['2022-02-10', '2022-02-13', '2022-02-16', '2022-02-19', '2022-02-22', '2022-02-25',
+          '2022-02-28'], ['2022-03-03', '2022-03-06', '2022-03-09', nan, nan, nan,
+          nan], ['2022-03-12', '2022-03-15', '2022-03-18', nan, nan, nan, nan], [
+          '2022-03-21', '2022-03-24', '2022-03-26', nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan]]
+      DOHLI:
+      - [[nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan],
+        [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan]]
+      DVSFI:
+      - [[0.0300389748368984, 0.015100387902098, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0,
+          0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0,
+          0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [
+          0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0,
+          0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0,
+          0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
+      DVSLI:
+      - [[0.966495957211469, 0.89978092656478, 0.833464098264258, 0.767453740510391,
+          0.701659300382343, 0.635991051541617, 0.570359747022458], [0.504676274902224,
+          0.438851314655598, 0.37279499199879, nan, nan, nan, nan], [0.306416530023656,
+          0.239623894407117, 0.172323430458103, nan, nan, nan, nan], [0.104419489732868,
+          0.035814043909522, 0.0, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan,
+          nan], [nan, nan, nan, nan, nan, nan, nan]]
+      LAI:
+      - [[0.0203326840588793, 0.0205464842553259, 0.0208400054945212, 0.0211691354730804,
+          0.0213523136853572, 0.02092688306473, 0.019049382091903], [0.0148325386039088,
+          0.0086053945175365, 0.002981068256228, nan, nan, nan, nan], [0.0004342038709975,
+          1.51912334005237e-05, 5.10196901181616e-08, nan, nan, nan, nan], [3.51715893625854e-12,
+          3.88502862592069e-19, 0.0, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan]]
+      LVI:
+      - [[0.653027104972378, 0.65995652737125, 0.669477077901125, 0.680179972788203,
+          0.686234029457279, 0.67275718907577, 0.612594863926835], [0.477146836659828,
+          0.276921773757592, 0.095967193800257, nan, nan, nan, nan], [0.0139841394527752,
+          0.000489494734132, 1.64468186436383e-06, nan, nan, nan, nan], [1.13407793643647e-10,
+          1.2527850256581200e-17, 0.0, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan,
+          nan, nan], [nan, nan, nan, nan, nan, nan, nan]]
+      SLAI:
+      - [[0.031136049325, 0.031133087697646, 0.0311287818374947, 0.0311228457595529,
+          0.0311152095409277, 0.0311061510182734, 0.0310962250692441], [0.0310859134346629,
+          0.0310752013312343, 0.0310634365095069, nan, nan, nan, nan], [0.0310497800808592,
+          0.0310345946196133, 0.0310211477135093, nan, nan, nan, nan], [0.0310135638795539,
+          0.0310112076242573, 0.0308791998225565, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan], [nan, nan,
+          nan, nan, nan, nan, nan], [nan, nan, nan, nan, nan, nan, nan]]
+      CROP_END_TYPE:
+      - maturity
+      CROP_START_TYPE:
+      - sowing
+      RGR:
+      - 1
+
+  Varieties:
+    tomato_01:
+      <<: *tomato
+      a:
+      - 0
+      - a
+      - [C.d]
