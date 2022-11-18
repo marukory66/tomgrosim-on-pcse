@@ -216,7 +216,6 @@ class my_YAMLCropDataProvider(MultiCropDataProvider):
         else:
             msg = "%s - current active crop '%s' with variety '%s'\n" % \
                   (self.__class__.__name__, self.current_crop_name, self.current_variety_name)
-
             msg += "Available crop parameters:\n %s" % str(dict.__str__(self))
             return msg
 YAMLCropDataProvider = my_YAMLCropDataProvider

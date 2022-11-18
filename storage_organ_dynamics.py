@@ -68,7 +68,8 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         for i in range(0, len(FD)):
             # for j in range(0, len(FD[i])):
             for j in range(0, len(FD[i])):
-                if DOHF[i][j] != None: # Harvested = Dead
+                # if DOHF[i][j] != None: # Harvested = Dead
+                if DOHF[i][j] != str(None): # Harvested = Dead
                     DWSO += float(FD[i][j]) # Cumulative yield (dry mass)
                     YWSO += float(FF[i][j]) # Cumulative yield (fresh mass)
                 else: # Not harvested yet = living
@@ -106,7 +107,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         # The potential growth rate of a truss (PGR) is given by the first derivative of the Richards growth function (Richards, 1959),
         # relating fruit dry weight to time after anthesis (Heuvelink and Marcelis, 1989). However, these authors showed that, when plotted against truss development stage, PGR was little affected by temperature.
         # Therefore one set of parameter values is sufficient to describe the potential dry weight growth of trusses at different temperatures satisfactorily. (Heuvelink, 1996, Annals of Botany)
-        print("day",day)
+        # print("day",day)
         # r.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
         k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
         k.MPGRFR = [[a * b for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] # Set MPGRFR of harvested fruits at 0.

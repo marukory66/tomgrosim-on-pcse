@@ -18,7 +18,7 @@ import os
 import pandas as pd
 #　datetimeをimportしたい
 # from datetime import date
-from datetime import datetime,timedelta,data
+from datetime import datetime,timedelta
 import numpy as np
 #%%
 class TOMGROSIM_Leaf_Dynamics(SimulationObject):
@@ -95,26 +95,31 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         p = self.params
         k = self.kiosk
         # List of harvested (0: harvested, 1: not yet harvested)
-        LOH = k.DOHL
+        # LOH = k.DOHL
+        LOH = copy.deepcopy(k.DOHL)
         for i in range(0, len(k.DOHL)):
             for j in range(0, len(k.DOHL[i])):
-                if k.DOHL[i][j] == None:
+                # if k.DOHL[i][j] == None:
+                if k.DOHL[i][j] == str(None):
                     LOH[i][j] = 1
                 else:
                     LOH[i][j] = 0
+    
         # Leaf age
-        k.LVAGE = k.DOEL
+        # k.LVAGE = k.DOEL
+        k.LVAGE = copy.deepcopy(k.DOEL)
+                
         for i in range(0, len(k.DOEL)):
             for j in range(0, len(k.DOEL[i])):
-                if k.DOEL[i][j] != None:
-                    print(type(k.DOEL[i][j]))
-                    print(type(day))
-                    tdatetime = datetime.strptime(k.DOEL[i][j], '%Y-%m-%d')
-                    tdate = date(tdatetime.year, tdatetime.month, tdatetime.day)
-                    age_days = day - tdate
-                    # age_days = day - k.DOEL[i][j]
-                    print(type(k.DOEL[i][j]))
-                    print(type(day))
+                if k.DOEL[i][j] != str(None):
+                # if k.DOEL[i][j] != nan:
+                    # print("asa",k.DOEL[i][j])
+                    td = datetime.strptime(str(k.DOEL[i][j]),'%Y-%m-%d' )
+                    td = td.date()
+                    age_days = day - td
+                    # print("age_days",age_days)
+                    # ↓経過日数を数値に変換する
+                    # age_days = age_days/timedelta(days=1)
                     k.LVAGE[i][j] = age_days
                 else:
                     k.LVAGE[i][j] = 0
@@ -135,8 +140,8 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         #記載が無いため仮置き 400固定でOK
         drv.CO2 = 400
         FCO2 = 1 + 0.003 * (drv.CO2 - 350)
-
         k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
+        # k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
         k.POL = [[a * b for a, b in zip(*rows)] for rows in zip(k.POL, LOH)] # Set POL of harvested leaves at 0.
         # Structural SLA (sSLA)
         # sSLA calculation of TOMGRO (Jones et al., 1991, Transaction of the ASAE). Parameter values of (Heuvelink and Bertin, 1994, J. Hort. Sci.) were used.
@@ -151,6 +156,9 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.MPGRLV = [list(map(lambda x: x / k.SSLA, row)) for row in k.POL]
         k.MPGRLV = [list(map(lambda x: (1 + p.FRPET) * x, row)) for row in k.MPGRLV] # Include petiole (partitioning ratio of dry matter, petiold:leaf = FRPET:1)
         k.PGRLV = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRLV]
+        
+
+
 
     @prepare_rates
     def calc_rates(self, day, drv ):

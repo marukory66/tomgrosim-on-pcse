@@ -46,7 +46,7 @@ class DVS_Partitioning(SimulationObject):
         FL = None
         FS = None
         FO = None
-
+        
         # TPGR = 1
         # TMPGR = 1
         # TPGRLV = 1
@@ -78,18 +78,13 @@ class DVS_Partitioning(SimulationObject):
         k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
         k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
 
-        # print(k.TPGRRO)
         # Partitioning within the vegetative plant part is at 7:3:1.5 for leaves, stem and roots, respectively. (Heuvelink, 1996, Ph.D. thesis, p.239 (Chapter 6.1)).
         # Therefore, the total potential growth rates of stems and roots are 3/7 and 1.5/7 of that of leaves, respectively.
         k.TPGRST = k.TPGRLV * 3/7 # Total potential growth rate of stems
         k.TPGRRO = k.TPGRLV * 1.5/7 # Total potential growhth rate of roots
         k.TPGR = k.TPGRLV + k.TPGRST + k.TPGRRO + k.TPGRFR # Total potential growth rate of all the organs
-        # # print(k.TPGRRO)
+        # print(k.TPGRRO)
         # print(k.TPGR)
-        # k.TPGRST = 1
-        # k.TPGRRO = 1
-        # k.TPGR = 1
-
 
         k.FR = k.TPGRRO / k.TPGR
         k.FL = k.TPGRLV / k.TPGR

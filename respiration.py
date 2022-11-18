@@ -20,6 +20,8 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         RMO = Float(-99.)
         # RFSETB = AfgenTrait()
         COEFRGR = Float(-99.)
+        # RGR = Float(-99.)
+
 
     class RateVariables(RatesTemplate):
         pass
@@ -27,11 +29,12 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
     class StateVariables(StatesTemplate):
         RGR = Float(-99.)
 
+
     def initialize(self, day, kiosk, parvalues):
         self.params = self.Parameters(parvalues)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
-        # self.states = self.StateVariables(kiosk,publish=[RGR],RGR=None)
+        self.states = self.StateVariables(kiosk,publish=["RGR"],RGR=None)
         self.rates = self.RateVariables(kiosk)
 
 

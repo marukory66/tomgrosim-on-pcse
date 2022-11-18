@@ -61,6 +61,7 @@ class Tomgrosim(SimulationObject):
     def initialize(self, day, kiosk, parvalues):
         # print("aaa",vars(parvalues))
         print("tomgrosim.py")
+
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
         self.pheno = Phenology(day, kiosk, parvalues)
@@ -89,7 +90,8 @@ class Tomgrosim(SimulationObject):
 
     @prepare_rates
     def calc_rates(self, day, drv):
-
+    # def calc_rates(self, day, kiosk, drv):
+        print("day",day)
         p = self.params
         r = self.rates
         k = self.kiosk
@@ -124,9 +126,9 @@ class Tomgrosim(SimulationObject):
         RGR = k.DMI / k.TDM
         k.RGRL.insert(0, RGR)
 
-        self.states = self.StateVariables(kiosk,
-                                          publish=["RGR"],
-                                           RGR=RGR)
+        # self.states = self.StateVariables(k,
+        #                                   publish=["RGR"],
+        #                                    RGR=RGR)
 
 
         self.ro_dynamics.calc_rates(day, drv)

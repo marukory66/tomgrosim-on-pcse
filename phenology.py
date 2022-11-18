@@ -111,7 +111,6 @@ class DVS_Phenology(SimulationObject):
         r = self.rates
         s = self.states
         k = self.kiosk
-        #回しすぎると超える？
 
         k.DVSF = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], k.DVSF, k.DVRF))
 
@@ -126,39 +125,56 @@ class DVS_Phenology(SimulationObject):
         # Here, when a 1st flower of a truss anthesis, the 1st leaf of the 3-trusses-above turss emerges.
         # 3) Add the leaf emergence after the 2nd leaf
         #
-        for i in range(0, int(s.DVS)):
+        # for i in range(0, int(s.DVS)):
+        for i in range(0, int(k.DVS)):
             # 1)
-            if s.DOEF[i][0] != None:
-                for j in range(1, len(s.DOEF[i])):
-                    if s.DOEF[i][j] != None:
+            # if s.DOEF[i][0] != None:
+            if k.DOEF[i][0] != None:
+                # for j in range(1, len(s.DOEF[i])):
+                for j in range(1, len(k.DOEF[i])):
+                    # if s.DOEF[i][j] != None:
+                    if k.DOEF[i][j] != None:
                         continue
                     else:
-                        s.DOEF[i][j] = day
+                        # s.DOEF[i][j] = day
+                        k.DOEF[i][j] = day
                         break
             # 2)
             else:
                 s.DOEF[i][0] = day
-                if s.DOEL[i+3][0] == None:
-                    s.DOEL[i+3][0] = day
+                # if s.DOEL[i+3][0] == None:
+                if k.DOEL[i+3][0] == None:
+                    # s.DOEL[i+3][0] = day
+                    k.DOEL[i+3][0] = day
         # 3)
-        if s.DVS % 1 >= 2/3:
+        # if s.DVS % 1 >= 2/3:
+        if k.DVS % 1 >= 2/3:
             nLEAF = 3
-        elif s.DVS % 1 >= 1/3:
+        # elif s.DVS % 1 >= 1/3:
+        elif k.DVS % 1 >= 1/3:
             nLEAF = 2
         else:
             nLEAF = 1
-        for i in range(0, int(s.DVS+2)):
+        # for i in range(0, int(s.DVS+2)):
+        for i in range(0, int(k.DVS+2)):
             for j in range(0,3):
-                if s.DOEL[i][j] == None:
-                    s.DOEL[i][j] = day
-        i = int(s.DVS) + 3
-        if s.DOEL[i][0] == None:
-            s.DOEL[i][0] = day
-        if s.DOEL[i][1] == None and nLEAF >= 2:
-            s.DOEL[i][1] = day
-        if s.DOEL[i][2] == None and nLEAF == 3:
-            s.DOEL[i][0] = day
-
+                # if s.DOEL[i][j] == None:
+                  if k.DOEL[i][j] == None:
+                    # s.DOEL[i][j] = day
+                    k.DOEL[i][j] = day
+        i = int(k.DVS) + 3
+        # if s.DOEL[i][0] == None:
+        #     s.DOEL[i][0] = day
+        # if s.DOEL[i][1] == None and nLEAF >= 2:
+        #     s.DOEL[i][1] = day
+        # if s.DOEL[i][2] == None and nLEAF == 3:
+        #     s.DOEL[i][0] = day
+        if k.DOEL[i][0] == None:
+            k.DOEL[i][0] = day
+        if k.DOEL[i][1] == None and nLEAF >= 2:
+            k.DOEL[i][1] = day
+        if k.DOEL[i][2] == None and nLEAF == 3:
+            k.DOEL[i][0] = day
         msg = "Finished state integration for %s"
         self.logger.debug(msg % day)
 
