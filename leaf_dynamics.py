@@ -71,6 +71,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         LA = params.LAI # List of initial leaf area
         # SLA = params.SLAI  # SLAs of the leaves that have not generated yet are 0.
         DOHL = params.DOHLI
+        
+        DOHL = [list(map(lambda x: None if x == 'None' else x, row)) for row in DOHL]
+        LA = [list(map(lambda x: None if x == 'None' else x, row)) for row in LA]
+        LV = [list(map(lambda x: None if x == 'None' else x, row)) for row in LV]
+
         WLV = 0.
         DWLV = 0.
         LAI = 0.
@@ -79,9 +84,15 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                 if DOHL[i][j] != None: # Harvested = Dead
                     DWLV += float(LV[i][j])
                 else: # Not harvested yet = living
-                    WLV += float(LV[i][j])
-                    LAI += float(LA[i][j])
+                    # WLV += float(LV[i][j])
+                    # LAI += float(LA[i][j])
+                    if LV[i][j]== None:
+                        pass
+                    else:
+                        WLV += float(LV[i][j])
+                        LAI += float(LA[i][j])
         TWLV = WLV + DWLV
+
 
         # Initialize StateVariables object
         self.states = self.StateVariables(kiosk, publish=["LV","LA","SLA","LAI","TWLV","WLV","DWLV","DOHL","ACL","SSLA","LVAGE","GRLV"],
@@ -100,26 +111,25 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         for i in range(0, len(k.DOHL)):
             for j in range(0, len(k.DOHL[i])):
                 # if k.DOHL[i][j] == None:
-                if k.DOHL[i][j] == str(None):
+                if k.DOHL[i][j] == None:
                     LOH[i][j] = 1
                 else:
                     LOH[i][j] = 0
-    
+        
         # Leaf age
         # k.LVAGE = k.DOEL
         k.LVAGE = copy.deepcopy(k.DOEL)
                 
         for i in range(0, len(k.DOEL)):
             for j in range(0, len(k.DOEL[i])):
-                if k.DOEL[i][j] != str(None):
-                # if k.DOEL[i][j] != nan:
-                    # print("asa",k.DOEL[i][j])
+                if k.DOEL[i][j] != None:
                     td = datetime.strptime(str(k.DOEL[i][j]),'%Y-%m-%d' )
+                    # td = datetime.strptime((k.DOEL[i][j]),'%Y-%m-%d' )
+                    
                     td = td.date()
                     age_days = day - td
-                    # print("age_days",age_days)
                     # ↓経過日数を数値に変換する
-                    # age_days = age_days/timedelta(days=1)
+                    age_days = age_days/timedelta(days=1)
                     k.LVAGE[i][j] = age_days
                 else:
                     k.LVAGE[i][j] = 0
@@ -127,10 +137,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         # List of potential leaf expansion rate of each leaf
         # The first derivative of a Gompertz function relating area of growing leaves to time from leaf appearance (Berin, 1993, Ph.D. thesis)
         # yields the potential area expansion rate of a leaf (Heuvelink and Bertin, 1994, J. Hort. Sci,)
-
-        # weatherfile = os.path.join("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/nl1.xlsx")
-        # wdp = ExcelWeatherDataProvider(weatherfile) # daily weather observation
-        # drv = wdp(day)
 
         drv.TEMP = ((drv.TMAX + drv.TMIN)/2)
         if drv.TEMP <= 28:
@@ -140,9 +146,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         #記載が無いため仮置き 400固定でOK
         drv.CO2 = 400
         FCO2 = 1 + 0.003 * (drv.CO2 - 350)
-        k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
-        # k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (1 - p.POLC)) * exp(-exp(-p.POLB * (1 - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
+
+        k.POL = [list(map(lambda x: p.PD * FTEMP * FCO2 * p.POLA * p.POLB * exp(-p.POLB * (x - p.POLC)) * exp(-exp(-p.POLB * (x - p.POLC))), row)) for row in k.LVAGE] # p.PD: plant density
+
         k.POL = [[a * b for a, b in zip(*rows)] for rows in zip(k.POL, LOH)] # Set POL of harvested leaves at 0.
+
         # Structural SLA (sSLA)
         # sSLA calculation of TOMGRO (Jones et al., 1991, Transaction of the ASAE). Parameter values of (Heuvelink and Bertin, 1994, J. Hort. Sci.) were used.
         #全日射(IRRAD)を光合成有効放射(PAR)に変換して使用
@@ -157,9 +165,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.MPGRLV = [list(map(lambda x: (1 + p.FRPET) * x, row)) for row in k.MPGRLV] # Include petiole (partitioning ratio of dry matter, petiold:leaf = FRPET:1)
         k.PGRLV = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRLV]
         
-
-
-
     @prepare_rates
     def calc_rates(self, day, drv ):
         r = self.rates
@@ -178,32 +183,59 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         r = self.rates
         s = self.states
         k = self.kiosk
-
+        def sum_(x):
+            if x[0]==None or x[1]==None:
+                pass
+            else:
+                return sum(x)
         # Update leaf biomass states
-        s.LV = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.LV, k.GRLV))
+        k.LV = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LV, k.GRLV))
 
         # Update leaf area
-        s.LA = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], s.LA, k.ACL))
-
+        k.LA = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LA, k.ACL))
+        
         # Update leaf SLA
-        s.SLA = [[a / b for a, b in zip(*rows)] for rows in zip(s.LA, s.LV)]
+        # k.SLA = [[a / b for a, b in zip(*rows)] for rows in zip(k.LA, k.LV)]
+        k.SLA = [[None if a==None or b==None else a / b for a, b in zip(*rows) ] for rows in zip(k.LA, k.LV)]
+
 
         # Update total leaf biomass
-        s.WLV = 0.
-        s.DWLV = 0.
-        s.LAI = 0.
-        for i in range(0, len(s.LV)):
-            for j in range(0, len(s.LV[i])):
-                if s.DOHL[i][j] != None: #already harvested (= dead), DOHL[i][j] == None: not harvested yet (= living).
-                    s.DWLV += s.LV[i][j]
-                else:
-                    s.WLV += s.LV[i][j]
-                    s.LAI += s.LA[i][j]
-        s.TWLV = s.WLV + s.DWLV
+        k.WLV = 0.
+        k.DWLV = 0.
+        k.LAI = 0.
+        
+        
 
+        for i in range(0, len(k.LV)):
+            for j in range(0, len(k.LV[i])):
+                # if k.DOHL[i][j] != None: #already harvested (= dead), DOHL[i][j] == None: not harvested yet (= living).
+                #     k.DWLV += k.LV[i][j]
+                if k.DOHL[i][j] != None: #already harvested (= dead), DOHL[i][j] == None: not harvested yet (= living).
+                    if i >= 1 and j >= 3:
+                        pass
+                    else:
+                        k.DWLV += k.LV[i][j]
+                else:
+                    if k.LV[i][j]== None:
+                        pass
+                    else:
+                        k.WLV += k.LV[i][j]
+                        k.LAI += k.LA[i][j]
+        k.TWLV = k.WLV + k.DWLV
+        print("LAI",k.LAI)
         # Harvest scheme for updating DOHL
         # DOHL ... If the development stage (DVSF) of the 1st fruit of the truss becomes over 0.8, then the leaves on the truss will be removed.
-        for i in range(0, len(s.DOHL)):
-            for j in range(0, len(s.DOHL[i])):
-                if s.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
-                    s.DOHL[i][j] = day
+        # for i in range(0, len(k.DOHL)):
+        #     for j in range(0, len(k.DOHL[i])):
+        #         if k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
+        #             k.DOHL[i][j] = day
+        for i in range(0, len(k.DOHL)):
+            for j in range(0, len(k.DOHL[i])):
+                if k.DVSF[i][0] == None :
+                    pass 
+                elif k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
+                    k.DOHL[i][j] = day
+                else:
+                    pass
+
+# %%

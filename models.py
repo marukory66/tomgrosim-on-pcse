@@ -38,6 +38,8 @@ def my_on_CROP_START(self, day, crop_name=None, variety_name=None,
     self.crop = self.mconf.CROP(day, self.kiosk, self.parameterprovider)
 Engine._on_CROP_START = my_on_CROP_START
 
+
+
 class sample(Engine):
     config = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/sample.conf"
 

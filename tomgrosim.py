@@ -3,6 +3,7 @@
 # Naomichi Fujiuchi (naofujiuchi@gmail.com), April 2022
 # This is a derivative work by Fujiuchi (GNU GPL license) from the original work PCSE by Allard de Wit (allard.dewit@wur.nl) (EUPL license).
 import datetime
+import copy
 
 from pcse.traitlets import Float, Int, Instance, Enum, Unicode
 from pcse.decorators import prepare_rates, prepare_states
@@ -36,7 +37,8 @@ class Tomgrosim(SimulationObject):
         CVR = Float(-99.)
         CVS = Float(-99.)
         DMII = Float(-99.)
-        GASSL = Instance(list)
+        ASSIMI = Instance(list)
+
 
     class StateVariables(StatesTemplate):
         TDM  = Float(-99.) # Total living plant dry mass
@@ -54,14 +56,14 @@ class Tomgrosim(SimulationObject):
         GASS = Float(-99.)
         MRES = Float(-99.)
         ASRC = Float(-99.)
+        ASSIM = Instance(list)
+
 
     class RateVariables(RatesTemplate):
         pass
 
     def initialize(self, day, kiosk, parvalues):
-        # print("aaa",vars(parvalues))
         print("tomgrosim.py")
-
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
         self.pheno = Phenology(day, kiosk, parvalues)
@@ -77,11 +79,12 @@ class Tomgrosim(SimulationObject):
         DMII = 0.2*TDM
         # TDM = self.kiosk.TWLV + 1 + self.kiosk.TWSO
 
-
+        # GASS = copy.deepcopy(self.params.GASSL)
+        ASSIM = copy.deepcopy(self.params.ASSIMI)
 
         self.states = self.StateVariables(kiosk,
-                                          publish=["CVF","DMI","RGRL","TDM", "GASST", "MREST",  "ASA", "AF", "CAF","DMA"],
-                                          CVF=None,DMI=DMII,RGRL=[],DMA=None,MRES=None,ASRC=None,GASS = None,
+                                          publish=["CVF","DMI","RGRL","TDM","GASST","MREST","ASA", "AF", "CAF","DMA","ASSIM"],
+                                          CVF=None,DMI=DMII,RGRL=[],DMA=None,MRES=None,ASRC=None,GASS=None,ASSIM=ASSIM,
                                           TDM=TDM, GASST=0.0, MREST=0.0,
                                           DOF=None, FINISH_TYPE=None,
                                           ASA=0.0, AF=None, CAF=1.0)
@@ -96,21 +99,40 @@ class Tomgrosim(SimulationObject):
         r = self.rates
         k = self.kiosk
         self.pheno.calc_rates(day,drv)
+        
+        # Relative growth rate (RGR) of plant
+        # RGRL is the list of RGRs
+        RGR = k.DMI / k.TDM
+        k.RGRL.insert(0, RGR)
+        
         # Potential assimilation
-        # 以下は実際の
-        # を直接使用
+
+        # t_year = day.strftime("%Y")
+        # t_month = day.strftime("%m").lstrip("0")
+        # t_day = day.strftime("%d").lstrip("0")
+        # without_0day = t_year + "/" + t_month + "/" + t_day
+        
+        def assim_get(Gass_list,day):
+            t_year = day.strftime("%Y")
+            t_month = day.strftime("%m").lstrip("0")
+            t_day = day.strftime("%d").lstrip("0")
+            without_0day = t_year + "/" + t_month + "/" + t_day    
+            for row in range(len(Gass_list)):
+                tmp_day = Gass_list[row][0]
+                if tmp_day == str(without_0day):
+                    return Gass_list[row][-1]
         # k.GASS = self.assim(day, drv) + k.ASA
-        # dayに対応する数値を取得
-        def fun_gass(day):
-            # dayに対応する数値をGASSLから取得
-            pass
-        # k.GASS = fun_gass(day) + k.ASA
-        k.GASS = 1
+        
+        k.GASS = assim_get(k.ASSIM,day) + k.ASA
+        print(day)
+        
         # Respiration
         PMRES = self.mres(day, drv)
         k.MRES  = min(k.GASS, PMRES)
+                
         # Net available assimilates
         k.ASRC  = k.GASS - k.MRES
+        
         # Potential growth rate
         self.so_dynamics.calc_potential(day, drv)
         self.lv_dynamics.calc_potential(day, drv)
@@ -121,14 +143,6 @@ class Tomgrosim(SimulationObject):
                   (1.-pf.FR) + pf.FR/p.CVR)
         k.DMA = k.CVF * k.ASRC
 
-        # Relative growth rate (RGR) of plant
-        # RGRL is the list of RGRs
-        RGR = k.DMI / k.TDM
-        k.RGRL.insert(0, RGR)
-
-        # self.states = self.StateVariables(k,
-        #                                   publish=["RGR"],
-        #                                    RGR=RGR)
 
 
         self.ro_dynamics.calc_rates(day, drv)
@@ -141,14 +155,11 @@ class Tomgrosim(SimulationObject):
         k = self.kiosk
         r = self.rates
         s = self.states
-
         # Phenology
         self.pheno.integrate(day, delt)
 
         # Assimilate pool (ASA)
         # All sinks derive their assimilates for growth from one common assimilate pool. (Heuvelink, 1996, Ph.D. thesis, p. 239 (Chapter 6.1))
-        # k.TPGR = 1
-        # k.DMA = 2
         if k.DMA <= k.TPGR:
             k.DMI = k.DMA
             s.ASA = 0
@@ -187,6 +198,7 @@ class Tomgrosim(SimulationObject):
 
         # total gross assimilation and maintenance respiration
         s.GASST += k.GASS
+        
         s.MREST += k.MRES
 
     @prepare_states

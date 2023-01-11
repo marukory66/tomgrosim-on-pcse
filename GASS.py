@@ -45,6 +45,7 @@ with open(Path('C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on
     yaml.dump(yamldata, f)
 
 # %%
+
 # yamlに代入
 #一つのcsvファイルに複数記載想定，２重リスト無し想定
 

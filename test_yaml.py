@@ -216,13 +216,14 @@ class my_YAMLCropDataProvider(MultiCropDataProvider):
         else:
             msg = "%s - current active crop '%s' with variety '%s'\n" % \
                   (self.__class__.__name__, self.current_crop_name, self.current_variety_name)
+       
             msg += "Available crop parameters:\n %s" % str(dict.__str__(self))
             return msg
 YAMLCropDataProvider = my_YAMLCropDataProvider
+
 #%%
 p = YAMLCropDataProvider(fpath=r"C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/yamls")
 p.set_active_crop('tomato','tomato_01')
-# print(ProcessLookupError())
 crop = p
 soil = CABOFileReader("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/ec3.soil")
 site = WOFOST72SiteDataProvider(WAV=100,CO2=360)
@@ -253,9 +254,8 @@ weatherfile = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on
 weatherdataprovider = ExcelWeatherDataProvider(weatherfile)
 agromanagement = yaml.load(yaml_agro,Loader=yaml.Loader)
 wofost = sample(parameterprovider, weatherdataprovider, agromanagement)
-
 wofost.run_till_terminate()
 output = wofost.get_output()
 df = pd.DataFrame(output).set_index("day")
 df.tail()
-# %%
+#%%

@@ -4,6 +4,7 @@
 # This is a derivative work by Fujiuchi (GNU GPL license) from the original work PCSE by Allard de Wit (allard.dewit@wur.nl) (EUPL license).
 from collections import namedtuple
 from math import exp
+import math
 
 from pcse.traitlets import Float, Int, Instance
 from pcse.decorators import prepare_rates, prepare_states
@@ -46,20 +47,11 @@ class DVS_Partitioning(SimulationObject):
         FL = None
         FS = None
         FO = None
-        
-        # TPGR = 1
-        # TMPGR = 1
-        # TPGRLV = 1
-        # TMPGRLV = 1
-        # TPGRFR = 1
-        # TMPGRFR = 1
-        # TPGRST = 1
-        # TPGRRO = 1
 
         # Pack partitioning factors into tuple
         PF = PartioningFactors(FR, FL, FS, FO)
 
-        self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TMPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR","TPGRST","TPGRRO"],
+        self.states = self.StateVariables(kiosk, publish=["FR","FL","FS","FO","TPGR","TMPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR","TPGRST","TPGRRO","PF"],
                                           FR=FR, FL=FL, FS=FS, FO=FO, PF=PF,
                                           TPGR=None, TMPGR=None,
                                           TPGRLV=None, TMPGRLV=None, TPGRFR=None, TMPGRFR=None,
@@ -75,23 +67,26 @@ class DVS_Partitioning(SimulationObject):
 
         k.TPGRLV = sum(map(sum, k.PGRLV)) # Total potential growth rate of all the leaves
         k.TMPGRLV = sum(map(sum, k.MPGRLV)) # Total potential growth rate of all the leaves
-        k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
-        k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
-
+        
+        
+        # k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
+        # k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
+    
+        k.TPGRFR = 1 
+        k.TMPGRFR = 1
+        
+        
         # Partitioning within the vegetative plant part is at 7:3:1.5 for leaves, stem and roots, respectively. (Heuvelink, 1996, Ph.D. thesis, p.239 (Chapter 6.1)).
         # Therefore, the total potential growth rates of stems and roots are 3/7 and 1.5/7 of that of leaves, respectively.
         k.TPGRST = k.TPGRLV * 3/7 # Total potential growth rate of stems
         k.TPGRRO = k.TPGRLV * 1.5/7 # Total potential growhth rate of roots
         k.TPGR = k.TPGRLV + k.TPGRST + k.TPGRRO + k.TPGRFR # Total potential growth rate of all the organs
-        # print(k.TPGRRO)
-        # print(k.TPGR)
-
         k.FR = k.TPGRRO / k.TPGR
         k.FL = k.TPGRLV / k.TPGR
         k.FS = k.TPGRST / k.TPGR
         k.FO = k.TPGRFR / k.TPGR
-        r.PF = PartioningFactors(k.FR, k.FL, k.FS, k.FO)
-        #↑注意
+        k.PF = PartioningFactors(k.FR, k.FL, k.FS, k.FO)
         k.TMPGR = k.TMPGRLV + k.TMPGRLV * 3/7 + k.TMPGRLV * 1.5/7 + k.TMPGRFR # Total maximum potential growth rate of all the organs
 
-        return self.rates.PF
+        return k.PF
+        # return self.rates.PF

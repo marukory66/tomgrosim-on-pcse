@@ -7,19 +7,22 @@ from pcse.decorators import prepare_rates, prepare_states
 from pcse.util import limit, AfgenTrait
 from pcse.base import ParamTemplate, StatesTemplate, RatesTemplate, \
     SimulationObject, VariableKiosk
-
+import copy
 class Simple_Stem_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
         STI = Float(-99.) # Initial stem dry mass
-
+        WSTI = Float(-99)
+        
     class RateVariables(RatesTemplate):
-        GRST = Float(-99.) # Growth rate of stem dry mass
-
+        pass
+        
     class StateVariables(StatesTemplate):
         # ST = Float(-99) # Stem dry mass
-        WST = Float(-99)
         TWST = Float(-99) # Stem dry mass
+        WST = Float(-99)
+        GRST = Float(-99.) # Growth rate of stem dry mass
+
     def initialize(self, day, kiosk, parameters):
 
         self.params = self.Parameters(parameters)
@@ -29,11 +32,11 @@ class Simple_Stem_Dynamics(SimulationObject):
         # INITIAL STATES
         params = self.params
         # ST = params.STI
-        WST = params.STI
+        WST = params.WSTI
         TWST = WST
 
-        self.states = self.StateVariables(kiosk, publish=["WST","TWST"],
-                                          WST=WST,TWST=TWST)
+        self.states = self.StateVariables(kiosk, publish=["GRST","WST","TWST"],
+                                          GRST=None,WST=WST,TWST=TWST)
 
     @prepare_rates
     def calc_rates(self,day, drv):

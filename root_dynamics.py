@@ -14,12 +14,14 @@ class Simple_Root_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
         ROI = Float(-99.) # Initial root dry mass
+        
     class RateVariables(RatesTemplate):
-        GRRO = Float(-99.) # Growth rate of root dry mass
+        pass
 
     class StateVariables(StatesTemplate):
         WRO = Float(-99)
         TWRO = Float(-99) # Root dry mass
+        GRRO = Float(-99.) # Growth rate of root dry mass
 
     def initialize(self, day, kiosk, parameters):
         """
@@ -27,7 +29,7 @@ class Simple_Root_Dynamics(SimulationObject):
         :param kiosk: variable kiosk of this PCSE  instance
         :param parameters: ParameterProvider object with key/value pairs
         """
-        # print(vars(parameters))
+
         self.params = self.Parameters(parameters)
         self.rates = self.RateVariables(kiosk)
         self.kiosk = kiosk
@@ -36,8 +38,11 @@ class Simple_Root_Dynamics(SimulationObject):
         params = self.params
         WRO = params.ROI
         TWRO = WRO
-        self.states = self.StateVariables(kiosk, publish=["TWRO","WRO"],
-                                          TWRO=TWRO,WRO=WRO)
+        # self.states = self.StateVariables(kiosk, publish=["TWRO","WRO"],
+        #                                   TWRO=TWRO,WRO=WRO)
+
+        self.states = self.StateVariables(kiosk, publish=["GRRO","TWRO","WRO"],
+                                          GRRO=None,TWRO=TWRO,WRO=WRO)
 
     @prepare_rates
     def calc_rates(self,day, drv):
@@ -45,12 +50,17 @@ class Simple_Root_Dynamics(SimulationObject):
         rates = self.rates
         k = self.kiosk
 
-        rates.GRRO = k.DMI * k.FR# Dry mass partitioned to roots. The partitioning fraction ratio of roots is FR.
-
+        # rates.GRRO = k.DMI * k.FR# Dry mass partitioned to roots. The partitioning fraction ratio of roots is FR.
+        k.GRRO = k.DMI * k.FR
     @prepare_states
     def integrate(self, day, delt=1.0):
         rates = self.rates
         states = self.states
+        k = self.kiosk
 
-        states.WRO += rates.GRRO
-        states.TWRO = states.WRO
+        k.WRO += k.GRRO
+        k.TWRO = k.WRO        
+
+
+        # states.WRO += rates.GRRO
+        # states.TWRO = states.WRO
