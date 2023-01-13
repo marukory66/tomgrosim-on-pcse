@@ -74,11 +74,9 @@ class DVS_Phenology(SimulationObject):
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # The function to calculate DVRF is applied to each element of s.DVSF
 
-        # print(type(k.DVSF[0][0]))
         k.DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
         # DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
-        # print("DVRF",k.DVRF)
-
+  
         msg = "Finished rate calculation for %s"
         self.logger.debug(msg % day)
 

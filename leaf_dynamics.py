@@ -20,6 +20,7 @@ import pandas as pd
 # from datetime import date
 from datetime import datetime,timedelta
 import numpy as np
+import csv
 #%%
 class TOMGROSIM_Leaf_Dynamics(SimulationObject):
 
@@ -114,7 +115,7 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                 if k.DOHL[i][j] == None:
                     LOH[i][j] = 1
                 else:
-                    LOH[i][j] = 0
+                    LOH[i][j] = 0        
         
         # Leaf age
         # k.LVAGE = k.DOEL
@@ -190,7 +191,7 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                 return sum(x)
         # Update leaf biomass states
         k.LV = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LV, k.GRLV))
-
+        
         # Update leaf area
         k.LA = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LA, k.ACL))
         

@@ -40,7 +40,6 @@ from pcse import settings
 from pcse.util import version_tuple
 
 
-
 class my_YAMLCropDataProvider(MultiCropDataProvider):
     HTTP_OK = 200
     current_crop_name = None
@@ -235,8 +234,8 @@ from pcse.fileinput import ExcelWeatherDataProvider
 yaml_agro = """
 - 2006-01-01:
     CropCalendar:
-        crop_name: tomato
-        variety_name: tomato
+        crop_name: sugarbeet
+        variety_name: Sugarbeet_603
         crop_start_date: 2006-03-31
         crop_start_type: emergence
         crop_end_date: 2006-10-20

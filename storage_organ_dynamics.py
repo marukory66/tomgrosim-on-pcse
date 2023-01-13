@@ -14,6 +14,7 @@ from datetime import datetime as dt
 from functools import reduce
 import csv
 import numpy as np
+import pandas as pd
 #%%
 class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
 
@@ -123,32 +124,22 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         # r.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row)) for row in k.DVSF] # p.PD: plant density
         
         # k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)), row )) for row in k.DVSF] # p.PD: plant density
-        def MPGRFR_(x,y):
-            if x != None and y != None:
-                return x*y
+        def MPGRFR_(x,y,z):
+            if x != None and y != None and z != None:
+                return x*y*z
             else:
                 pass
-
-        k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)) if isinstance(x,float) else None, row )) for row in k.DVSF] # p.PD: plant density
-        # [[print(rows)] for rows in zip(k.MPGRFR, LOH)]
-        # print("k.MPGRFR",k.MPGRFR)
-        # k.MPGRFR = [[a * b for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] # Set MPGRFR of harvested fruits at 0.
-        k.MPGRFR = [[MPGRFR_(a,b) for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] 
-        # print("k.MPGRFR",k.MPGRFR)
         
-
-        #if isinstance(x,float)
-
-        # for i in range(0,len(k.MPGRFR)):
-        #     for j in range(0,len(LOH)):
-        #         tmp = [x * y for (x, y) in zip(k.MPGRFR[i], LOH[j]) if x != None and y != None]
-        #         print(tmp)
-        # print("2k.MPGRFR",k.MPGRFR)
+        
+        k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)) if isinstance(x,float) else None, row )) for row in k.DVSF] # p.PD: plant density
+        # k.MPGRFR = [[a * b for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] # Set MPGRFR of harvested fruits at 0.
+        # k.MPGRFR = [[MPGRFR_(a,b) for a, b in zip(*rows)] for rows in zip(k.MPGRFR, LOH)] 
+        k.MPGRFR = [[MPGRFR_(a,b,c) for a, b, c in zip(*rows)] for rows in zip(k.MPGRFR, LOH,k.DVRF)]
         # # Potential growth rate of fruits (PGRFR) is MPGRFR * CAF.
         # The cumulative adaptation factor (CAF) is a state variable calculated in wofost.py
         # k.PGRFR = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRFR]
         k.PGRFR = [list(map(lambda x: k.CAF * x if isinstance(x,float) else None, row)) for row in k.MPGRFR]
-        # print("k.PGRFR",k.PGRFR)
+
     @prepare_rates
     def calc_rates(self, day, drv):
         r = self.rates
@@ -157,14 +148,12 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
 
         # Structural DMC (sDMC)
         k.SDMC = p.SDMC
-        # print("k.GRFR",k.GRFR)
-        # print("k.PGRFR",k.PGRFR)
+
         k.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR if isinstance(x,float) else None, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR)
         k.GRFRF = [list(map(lambda x: x / k.SDMC if isinstance(x,float) else None, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase
         # k.GRFR = [list(map(lambda x: k.DMI * x / k.TPGR, row)) for row in k.PGRFR] # List of dry mass partitioned to each fruit depending on its potential growth rate (PGRFR)
         # k.GRFRF = [list(map(lambda x: x / k.SDMC, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase
-        # print("k.GRFR",k.GRFR)
-        # print("k.PGRFR",k.PGRFR)
+
 
     @prepare_states
     def integrate(self,day, delt=1.0):
@@ -201,7 +190,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         k.YWSO = 0.
         print("k.YWSO_reset",k.YWSO)
         # for i in range(0, len(k.FD)):
-        #     for j in range(0, len(k.FD[i])):
+        #     for j in range(0, len(k.FD[i])):YWSO
         #         if k.DOHF[i][j] != None: # Harvested = Dead
         #             k.DWSO += k.FD[i][j] # Cumulative yield (dry mass)
         #             k.YWSO += k.FF[i][j] # Cumulative yield (fresh mass)
@@ -247,6 +236,8 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
                 else:
                     pass
         
+        #初期値を与えたlist
+
         csv_FF = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.FF.csv"        
         
         with open(csv_FF, mode="a", encoding="utf-8") as f:
@@ -296,4 +287,161 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
             writer = csv.writer(f, lineterminator='\n')
             writer.writerows([k.GRFR])
 
+        csv_GRFRF = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.GRFRF.csv"        
+        
+        with open(csv_GRFRF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.GRFRF])
 
+        csv_PGRFR = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.PGRFR.csv"        
+        
+        with open(csv_PGRFR, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.PGRFR])
+
+        csv_MPGRFR = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.MPGRFR.csv"        
+        
+        with open(csv_MPGRFR, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.MPGRFR])
+
+        csv_FRAGE = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.FRAGE.csv"        
+        
+        with open(csv_FRAGE, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.FRAGE])
+
+        csv_DMC = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.DMC.csv"        
+        
+        with open(csv_DMC, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.DMC])
+        
+        csv_DOEF = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.DOEF.csv"        
+        
+        with open(csv_DOEF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.DOEF])
+        
+        csv_DOHF = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.DOHF.csv"        
+        
+        with open(csv_DOHF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.DOHF])
+        
+        csv_LA = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.LA.csv"        
+        
+        with open(csv_LA, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.LA])
+        
+        csv_SLA = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.SLA.csv"        
+        
+        with open(csv_SLA, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.SLA])
+
+        #初期値を与えず計算するlist
+        
+        csv_ACL = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.ACL.csv"        
+        
+        with open(csv_ACL, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.ACL])
+
+        csv_GRLV = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.GRLV.csv"        
+        
+        with open(csv_GRLV, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.GRLV])
+
+        csv_POL = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.POL.csv"        
+        
+        with open(csv_POL, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.POL])
+        
+        csv_LVAGE = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.LVAGE.csv"        
+        
+        with open(csv_LVAGE, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.LVAGE])
+
+        csv_PGRLV = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.PGRLV.csv"        
+        
+        with open(csv_PGRLV, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.PGRLV])
+        
+        csv_MPGRLV = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.MPGRLV.csv"        
+        
+        with open(csv_MPGRLV, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.MPGRLV])
+
+        csv_DVRF = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.DVRF.csv"        
+        
+        with open(csv_DVRF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.DVRF])
+        
+        csv_RGRL = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.RGRL.csv"        
+
+        with open(csv_RGRL, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.RGRL])
+        
+        csv_ASSIM = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.ASSIM.csv"        
+
+        with open(csv_ASSIM, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([k.ASSIM])
+
+        #各日にちごとの葉の枚数を算出
+        output_LV = copy.deepcopy(k.LV)
+        for i in range(0, len(k.LV)):
+            for j in range(0, len(k.LV[i])):
+                if k.LV[i][j] != None:
+                    if k.DOHL[i][j] == None:
+                        output_LV[i][j] = 1
+                    else:
+                        output_LV[i][j] = 0    
+                else:
+                    output_LV[i][j] = 0
+        
+        csv_LOH = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/k.LOH.csv"        
+        with open(csv_LOH, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerow([sum(map(sum, output_LV))])    
+
+
+        data_list = []
+        if str(day) == "2006-04-01":
+            data_list.append(["param","WSO","DWSO","YWSO","TWSO","SDMC","TDM","GASST","MREST","ASA","AF","CAF","DMI","CVF","DMA","GASS","MRES","ASRC","WRO","TWRO","GRRO","TWST","WST","GRST","LAI","WLV","DWLV","SSLA","FR","FL","FS","FO","TPGR","TMPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR","TPGRST","TPGRRO","PF","DVS","DVR","RGR"])
+        data_list.append([day,k.WSO,k.DWSO,k.YWSO,k.TWSO,k.SDMC,k.TDM,k.GASST,k.MREST,k.ASA,k.AF,k.CAF,k.DMI,k.CVF,k.DMA,k.GASS,k.MRES,k.ASRC,k.WRO,k.TWRO,k.GRRO,k.TWST,k.WST,k.GRST,k.LAI,k.WLV,k.DWLV,k.SSLA,k.FR,k.FL,k.FS,k.FO,k.TPGR,k.TMPGR,k.TPGRLV,k.TMPGRLV,k.TPGRFR,k.TMPGRFR,k.TPGRST,k.TPGRRO,k.PF,k.DVS,k.DVR,k.RGR])
+        df = pd.DataFrame(data_list)
+ 
+        #CSVに出力
+        df.to_csv("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test/f_param.csv",mode="a",index=False,header=False)
+
+
+# %%

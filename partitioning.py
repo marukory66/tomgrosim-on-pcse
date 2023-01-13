@@ -68,14 +68,19 @@ class DVS_Partitioning(SimulationObject):
         k.TPGRLV = sum(map(sum, k.PGRLV)) # Total potential growth rate of all the leaves
         k.TMPGRLV = sum(map(sum, k.MPGRLV)) # Total potential growth rate of all the leaves
         
+        k.PGRFR = [list(map(lambda x: 0 if x == None else x, row)) for row in k.PGRFR]
+        k.MPGRFR = [list(map(lambda x: 0 if x == None else x, row)) for row in k.MPGRFR]
         
-        # k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
-        # k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
-    
-        k.TPGRFR = 1 
-        k.TMPGRFR = 1
+        k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
+        k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
         
+        k.PGRFR = [list(map(lambda x: None if x == 0 else x, row)) for row in k.PGRFR]
+        k.MPGRFR = [list(map(lambda x: None if x == 0 else x, row)) for row in k.MPGRFR]
+                
         
+
+
+
         # Partitioning within the vegetative plant part is at 7:3:1.5 for leaves, stem and roots, respectively. (Heuvelink, 1996, Ph.D. thesis, p.239 (Chapter 6.1)).
         # Therefore, the total potential growth rates of stems and roots are 3/7 and 1.5/7 of that of leaves, respectively.
         k.TPGRST = k.TPGRLV * 3/7 # Total potential growth rate of stems
