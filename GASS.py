@@ -23,7 +23,7 @@ with open(Path("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on
     yamldata = yaml.load(f)
     add_yamldata = yamldata["CropParameters"]['EcoTypes']["tomato"]
     
-csv_file_path = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/20221101初期値/"
+csv_file_path = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/asai_plantation_data/出力用"
 csv_paths = glob.glob(csv_file_path + "/*.csv")
 
 for csv in csv_paths:
@@ -91,9 +91,9 @@ def get_day(yamlname,day):
 #　辞書をyamlに出力
 def export_dict(yamldata,day_dict):
     add_yamldata[yamldata]=day_dict
-    p
+    
 row = []
-path = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/Book.csv")
+path = ("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/asai_plantation_data/出力用/ASSIM.csv")
 df = pd.read_csv(path,header=0)
 df = df.fillna("")
 cols = []

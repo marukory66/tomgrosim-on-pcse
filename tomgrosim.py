@@ -18,6 +18,8 @@ from stem_dynamics import Simple_Stem_Dynamics as Stem_Dynamics
 from root_dynamics import Simple_Root_Dynamics as Root_Dynamics
 from leaf_dynamics import TOMGROSIM_Leaf_Dynamics as Leaf_Dynamics
 from storage_organ_dynamics import TOMGROSIM_Storage_Organ_Dynamics as Storage_Organ_Dynamics
+import pandas as pd
+import math
 #%%
 # class Tomgrosim(SimulationObject):
 class Tomgrosim(SimulationObject):
@@ -112,6 +114,9 @@ class Tomgrosim(SimulationObject):
         # t_day = day.strftime("%d").lstrip("0")
         # without_0day = t_year + "/" + t_month + "/" + t_day
         
+        # if day < date(2006,7,1):
+            #3か月は仮データでシミュレーション上で大きくなるまで待機
+            #ここで実測光合成量をyamlから取得している
         def assim_get(Gass_list,day):
             t_year = day.strftime("%Y")
             t_month = day.strftime("%m").lstrip("0")
@@ -125,9 +130,7 @@ class Tomgrosim(SimulationObject):
         
         #単位面積当たりの日積算光合成量　[gCH2O m-2 d-1] = チャンバ日積算光合成量　[mol d-1] *30 [gC-H2O mol-1] / 2 [/plant] *p.PD　[plant m-2]
         k.GASS = assim_get(k.ASSIM,day) + k.ASA#[gCH2O m-2 d-1]
-    
-        print(day)
-        
+        # print("7月以前",day)
         # Respiration
         PMRES = self.mres(day, drv)
         k.MRES  = min(k.GASS, PMRES)
@@ -136,17 +139,93 @@ class Tomgrosim(SimulationObject):
         # k.ASRC  = k.GASS - k.MRES
         k.ASRC  = k.GASS
         
+        def ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF):
+            REFGR = 0.5
+            SCP = 0.15
+            KDIFBL = 0.8
+            KDIF = 0.72
+            XGAUS3 = [0.112702, 0.5, 0.887298]
+            WGAUS3 = [0.277778, 0.444444, 0.277778]
+            SINEL = max(0.02, SINELV)
+            REFL = (1 - (1 - SCP)**(1/2)) / (1 + (1 - SCP)**(1/2))
+            REFPD = REFL * 2 / (1 + 1.6 * SINEL)
+            CLUSTF = KDIF / (KDIFBL * (1 - SCP)**(1/2))
+            KDIRBL = (0.5 / SINEL) * CLUSTF
+            KDIRT = KDIRBL * (1 - SCP)**(1/2)
+            T1 = math.exp(-KDIF * LAI)
+            T2 = math.exp(-KDIRT * LAI)
+            T3 = T1
+            CORR1 = (REFL - REFGR) / (REFGR - 1 / REFL) * T1**2
+            CORR2 = -REFPD**2 * T2**2
+            CORR3 = -REFL**2 * T3**2
+            RE1 = (REFL + CORR1 / REFL) / (1 + CORR1)
+            RE2 = (REFPD + CORR2 / REFPD) / (1 + CORR2)
+            RE3 = (REFL + CORR3 / REFL) / (1 + CORR3)
+            TE1 = T1 * (REFL**2 - 1) / (REFL * REFGR - 1) / (1 + CORR1)
+            TE2 = T2 * (1 - REFPD**2) / (1 + CORR2)
+            TE3 = T3 *(1 - REFL**2) / (1 + CORR3)
+            PHIU = REFGR * PARDIR * TE2 / (1 - RE3 * REFGR)
+            PGROS = 0
+            for i in range(0,3):
+                LAIC = LAI * XGAUS3[i]
+                PARLDF = (1 - REFL) * KDIF * (PARDIF * (math.exp(-KDIF * LAIC) + CORR1 * math.exp(KDIF * LAIC) / REFL) / (1 + CORR1) + PHIU * (math.exp(KDIF * (LAIC - LAI)) + CORR3 * math.exp(KDIF * (LAI - LAIC)) / REFL) / (1 + CORR3))
+                PARLT = (1 - REFPD) * PARDIR * KDIRT * (math.exp(-KDIRT * LAIC) + CORR2 * math.exp(KDIRT * LAIC) / REFPD) / (1 + CORR2)
+                PARLDR = (1 - SCP) * PARDIR * KDIRBL * math.exp(-KDIRBL * LAIC)
+                PARLSH = PARLDF + (PARLT - PARLDR)
+                PARLPP = PARDIR * (1 - SCP) / SINEL
+                FSLLA = CLUSTF * math.exp(-KDIRBL * LAIC)
+                ASSSH = PGMAX * (1 - math.exp(-EFF * PARLSH / PGMAX))
+                ASSSL = 0
+                for j in range(0,3):
+                    PARLSL = PARLSH + PARLPP * XGAUS3[j]
+                    ASSSL = ASSSL + PGMAX * (1 - math.exp(-EFF * PARLSL/ PGMAX)) * WGAUS3[j]
+                PGROS = PGROS + ((1 - FSLLA) * ASSSH + FSLLA * ASSSL) * WGAUS3[i]
+            PGROS_ = PGROS * LAI
+            return PGROS_
+        
+        assim_calculation= "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/df_assim_calculation(EFF,PGMAX).csv"
+        df_assim_calculation = pd.read_csv(assim_calculation)
+        # date_list = df_assim_calculation["date"].values.tolist() 
+        # date_list = list(dict.fromkeys(date_list))
+
+        # if day >= date(2006,7,1):
+        #     tmp_GASS = 0
+        #     # hour = list(df_assim_calculation.query('date == "2006/7/1" and h>0')["hour"])
+        #     sday = day.strftime("%Y/%#m/%#d")
+        #     hour = list(df_assim_calculation.query('date == @sday and h>0')["hour"])
+        #     LAI = k.LAI
+        #     for i in hour:
+        #         tmp = (df_assim_calculation.query('date == @sday and hour==@i'))
+        #         SINELV = tmp["h"].iloc[-1]
+        #         EFF = tmp["EFF"].iloc[-1]
+        #         PGMAX = tmp["PGMAX"].iloc[-1]
+        #         PARDIR = tmp["PARDIR"].iloc[-1]
+        #         PARDIF = tmp["PARDIF"].iloc[-1]
+        #         PGROS = ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF)
+        #         PGROS = PGROS*7200
+        #         tmp_GASS += PGROS
+        #     tmp_GASS = tmp_GASS/1000/44*30
+        #     #mgCO2をgにするために1000で割り
+        #     k.GASS = tmp_GASS
+        #     print("7月以降",day)
+        #     print("k.GASS",k.GASS)
+            
+        #     # Respiration
+        #     PMRES = self.mres(day, drv)
+        #     k.MRES  = min(k.GASS, PMRES)
+                    
+        #     # Net available assimilates
+        #     k.ASRC  = k.GASS - k.MRES
+            
         # Potential growth rate
         self.so_dynamics.calc_potential(day, drv)
         self.lv_dynamics.calc_potential(day, drv)
-
+        
         # DM partitioning factors (pf), conversion factor (CVF), dry matter increase (DMI)
         pf = self.part.calc_rates(day, drv)
         k.CVF = 1./((pf.FL/p.CVL + pf.FS/p.CVS + pf.FO/p.CVO) *
                   (1.-pf.FR) + pf.FR/p.CVR)
         k.DMA = k.CVF * k.ASRC #[gDM m-2 d-1]
-
-
 
         self.ro_dynamics.calc_rates(day, drv)
         self.st_dynamics.calc_rates(day, drv)

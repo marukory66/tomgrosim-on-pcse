@@ -1,0 +1,1073 @@
+# Crop parameter file for use with the PCSE/WISS implementations of the WOFOST
+# crop simulation model
+#
+# Creation date: 2017-07-06
+#
+# Contact: Allard de Wit (allard.dewit@wur.nl)
+#          Wageningen University and Research Centre
+#          PO Box 47, 6700 AA Wageningen, The Netherlands
+#
+# More information: - http://pcse.readthedocs.io
+#                   - http://www.wageningenur.nl/wofost
+#                   - https://github.com/ajwdewit/WOFOST_crop_parameters
+#
+Version: 1.0.0
+CropParameters:
+  GenericC3: &GenericC3
+    CO2EFFTB:
+    - [40., 0.00, 360., 1.00, 720., 1.11, 1000., 1.11, 2000., 1.11]
+    - multiplication factor for EFF to account for an increasing CO2 concentration
+    - [PPM, '-']
+    CO2TRATB:
+    - [40., 0.00, 360., 1.00, 720., 0.9, 1000., 0.9, 2000., 0.9]
+    - multiplication factor for maximum transpiration rate TRAMX to account for an
+      increasing CO2 concentration
+    - [PPM, '-']
+    CO2AMAXTB:
+    - [40., 0.00, 360., 1.00, 720., 1.60, 1000., 1.90, 2000., 1.90]
+    - multiplication factor for AMAX to account for an increasing CO2 concentration
+    - [PPM, '-']
+  GenericC4:
+    CO2EFFTB:
+    - [40., 0.00, 360., 1.00, 720., 1.00, 1000., 1.00, 2000., 1.00]
+    - multiplication factor for EFF to account for an increasing CO2 concentration
+    - [PPM, '-']
+    CO2TRATB:
+    - [40., 0.00, 360., 1.00, 720., 0.74, 1000., 0.74, 2000., 0.74]
+    - multiplication factor for maximum transpiration rate TRAMX to account for an
+      increasing CO2 concentration
+    - [PPM, '-']
+    CO2AMAXTB:
+    - [40., 0.00, 360., 1.00, 720., 1.00, 1000., 1.00, 2000., 1.00]
+    - multiplication factor for AMAX to account for an increasing CO2 concentration
+    - [PPM, '-']
+  EcoTypes:
+    tomato: &tomato
+      <<: *GenericC3
+      TBASEM:
+      - 3.0
+      - Lower threshold temperature for emergence
+      - lower threshold temp. for emergence cel
+      - [C]
+      TEFFMX:
+      - 20.0
+      - maximum effective temperature for emergence
+      - max. eff. temp. for emergence cel
+      - [C]
+      TSUMEM:
+      - 90
+      - temperature sum from sowing to emergence
+      - temperature sum from sowing to emergence cel d
+      - [C.d]
+            #
+            # PHENOLOGICAL DEVELOPMENT
+            #
+      IDSL:
+      - 0
+      - indicates whether pre-anthesis development depends on temperature (=0), plus
+        daylength (=1) , plus vernalization (=2)
+      - indicates whether pre-beet growth development depends
+      - [NA]
+      DLO:
+      - -99.0
+      - optimum daylength for development
+      - optimum daylength for development hr
+      - [hr]
+      DLC:
+      - -99.0
+      - critical daylength (lower threshold)
+      - optimum daylength for development hr
+      - [hr]
+      TSUM1:
+      - 650
+      - temperature sum from emergence to anthesis
+      - temp. sum from emergence to init. beet growth cel d
+      - [C.d]
+      TSUM2:
+      - 1400
+      - temperature sum from anthesis to maturity
+      - temp. sum from init. beet growth to maturity cel d
+      - [C.d]
+      DTSMTB:
+      - 0
+      - daily increase in temperature sum as function of daily average temperature
+      - daily increase in temp. sum as function of av. temp. cel; cel d
+      - [C, C]
+      DVSI:
+      - 1.2459
+      - Initial development stage
+      - initial DVS
+      - ['-']
+      WSTI:
+      - 2.36
+
+      DVSEND:
+      - 2.0
+      - development stage at harvest (= 2.0 at maturity)
+      - development stage at harvest (in this case a dummy)
+      - ['-']
+            #TDWI:
+            #-   0.51
+            #- initial total crop dry weight
+            #- initial total crop dry weight kg ha-1
+            #- ['kg.ha-1']
+      LAIEM:
+      - 0.0007
+      - leaf area index at emergence ha ha-1
+      RGRLAI:
+      - 0.016
+      - maximum relative increase in LAI
+      - maximum relative increase in LAI ha ha-1 d-1
+      - [d-1]
+            # green area
+      SLATB:
+      - [0.00, 0.0020, 2.00, 0.0020]
+      - specific leaf area as a function of DVS
+      - specific leaf area as a function of DVS -; ha kg-1
+      - ['-', ha.kg-1]
+      SPA:
+      - 0.0000
+      - specific pod area
+      - life span of leaves growing at 35 Celsius d
+      - [ha.kg-1]
+      SSATB:
+      - [0.00, 0.0000, 2.00, 0.0000]
+      - specific stem area as function of DVS
+      - specific stem area ha kg-1  as function of DVS
+      - ['-', ha.kg-1]
+      TBASE:
+      - 3.0
+      - lower threshold temperature for ageing of leaves
+      - lower threshold temp. for ageing of leaves cel
+      - [C]
+      SLAMAX:
+      - 0.075
+      - Maximum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE)
+        and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      SLAMIN:
+      - 0.024
+      - Minimum value of SLA m2 g-1 (Jones et al., 1991, Transaction of the ASAE)
+        and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      BETAT:
+      - 0.085
+      - Correction coefficient of temperature for SLA K-1 (Jones et al., 1991, Transaction
+        of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      BETAC:
+      - 0.00085
+      - Correction coefficient of temperature for SLA mol µmol-1 (Jones et al., 1991,
+        Transaction of the ASAE) and (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POLA:
+      - 0.104
+      - Gompertz parameter a for potential leaf expansion rate, equals to the potential
+        maximum leaf area m2 (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POLB:
+      - 0.136
+      - Gompertz parameter b for potential leaf expansion rate (Heuvelink and Bertin,
+        1994, J. Hort. Sci.)
+      POLC:
+      - 13.6
+      - Gompertz parameter c for potential leaf expansion rate (Heuvelink and Bertin,
+        1994, J. Hort. Sci.)
+      FRPET:
+      - 0.435
+      - Petiole potential growth rate relative to total leaf potential growth rate
+            # storage organs
+      POFA:
+      - 6
+      - Richards parameter a for potential fruit growth, equals to the potential maximum
+        dry mass of a fruit gDM (Heuvelink and Bertin, 1994, J. Hort. Sci.)
+      POFB:
+      - 4.34
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      POFC:
+      - 0.278
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      POFD:
+      - 1.31
+      - Richards parameter a for potential fruit growth (Heuvelink and Bertin, 1994,
+        J. Hort. Sci.)
+      SDMC:
+      - 0.08
+      - Structural dry matter content of fruit.
+            # assimilation
+      KDIFTB:
+      - [0.00, 0.690, 2.00, 0.690]
+      - extinction coefficient for diffuse visible light as function of DVS
+      - extinction coefficient for diffuse visible light - as function of DVS
+      - ['-', '-']
+      EFFTB:
+      - [0.0, 0.450, 40.0, 0.450]
+      - initial light-use efficiency single leaf as function of daily mean temperature
+      - light-use effic. single leaf kg ha-1 hr-1 j-1 m2 s as function of daily mean
+        temp.
+      - [C, kg.ha-1.hr-1.J-1.m2.s1]
+      AMAXTB:
+      - [0.00, 22.50, 1.00, 45.00, 1.13, 45.00 1.80, 36.00, 2.00, 36.00]
+      - maximum leaf CO2 assimilation rate as function of DVS
+      - max. leaf CO2 assim. rate
+      - ['-', kg.ha-1.hr-1]
+      TMPFTB:
+      - [0.00, 0.01, 3.00, 0.01, 10.00, 0.80, 15.00, 1.00, 20.00, 1.00, 30.00, 0.95,
+        35.00, 0.83, 40.00, 0.60]
+      - reduction factor of AMAX as function of average daily temperature
+      - reduction factor of AMAX as function of av. temp. cel; -
+      - [C, '-']
+      TMNFTB:
+      - [0.0, 0.000, 3.0, 1.000]
+      - reduction factor of gross assimlation rate as function of low minimum temperature
+      - red. factor of gross assim. rate as function of low min. temp. cel; -
+      - [C, '-']
+            # conversion of assimilates into biomass
+      CVL:
+      - 0.720
+      - OK efficiency of conversion into leaves
+      - efficiency of conversion into leaves kgDM kgCH2O-1  It is the same value with
+        that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVO:
+      - 0.730
+      - ok efficiency of conversion into storage organs
+      - efficiency of conversion into storage org. kgDM kgCH2O-1 for tomato (1/1.37;
+        Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVR:
+      - 0.720
+      - ok efficiency of conversion into roots
+      - efficiency of conversion into roots kgDM kgCH2O-1 It is the same value with
+        that for tomato (1/1.39; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+      CVS:
+      - 0.690
+      - ok efficiency of conversion into stems
+      - efficiency of conversion into stems kgDM kgCH2O-1 It is the same value with
+        that for tomato (1/1.45; Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [mass.mass-1]
+            # maintenance respiration
+      Q10:
+      - 2.00
+      - relative increase in respiration rate per 10 degrees Celsius temperature increase
+      - rel. incr. in resp. rate per 10 Cel temp. incr. - It is the same
+      - ['-']
+      RML:
+      - 0.0300
+      - relative maintenance respiration rate of leaves
+      - rel. maint. resp. rate leaves kg CH2O kg-1 d-1 It is the same value with that
+        for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [d-1]
+      RMO:
+      - 0.0100
+      - relative maintenance respiration rate of storage organs
+      - rel. maint. resp. rate stor.org. kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink,
+        1993, J. Hort. Sci.)
+      - [d-1]
+      RMR:
+      - 0.0100
+      - relative maintenance respiration rate of roots
+      - rel. maint. resp. rate roots kg CH2O kg-1 d-1 for tomato (Bertin and Heuvelink,
+        1993, J. Hort. Sci.)
+      - [d-1]
+      RMS:
+      - 0.0150
+      - relative maintenance respiration rate of stems
+      - rel. maint. resp. rate stems kg CH2O kg-1 d-1 It is the same value with that
+        for tomato (Bertin and Heuvelink, 1993, J. Hort. Sci.)
+      - [d-1]
+      RFSETB:
+      - [0.00, 1.000, 2.00, 1.000]
+      - reduction factor for senescence as function of DVS
+      - red. factor for senescence as function of DVS -; -
+      - ['-', '-']
+      COEFRGR:
+      - 33
+      - coefficient of correction by RGR (senescence) for maintenance respiration
+        (Heuvelink, 1995, Annals of Botany)
+            # partitioning
+      FRTB:
+      - [0.00, 0.20, 0.91, 0.29, 1.00, 0.30, 1.15, 0.15, 1.29, 0.09, 1.30, 0.09, 1.57,
+        0.08, 1.92, 0.01, 2.00, 0.02]
+      - fraction of total dry matter to roots as a function of DVS
+      - fraction of total dry matter to roots as a function of DVS -; kg kg-1
+      - ['-', mass.mass-1]
+      FLTB:
+      - [0.00, 0.85, 1.00, 0.50, 1.30, 0.05, 1.57, 0.05, 2.00, 0.05]
+      - fraction of total dry matter to leaves as a function of DVS
+      - fraction of above-gr. DM to leaves
+      - ['-', mass.mass-1]
+      FSTB:
+      - [0.00, 0.15, 1.00, 0.50, 1.30, 0.10, 1.57, 0.10, 1.92, 0.05, 2.00, 0.05]
+      - fraction of total dry matter to stems as a function of DVS
+      - fraction of above-gr. DM to stems
+      - ['-', mass.mass-1]
+      FOTB:
+      - [0.00, 0.00, 1.00, 0.00, 1.30, 0.85, 1.57, 0.85, 1.92, 0.90, 2.00, 0.90]
+      - fraction of above-gr. DM to stor. org as a function of DVS -; kg kg-1
+            # death rates
+      PERDL:
+      - 1.00
+      - maximum relative death rate of leaves due to water stress
+      - max. rel. death rate of leaves due to water stress
+      - ['-']
+      RDRRTB:
+      - [0.00, 0.000, 1.50, 0.000, 1.5001, 0.020, 2.00, 0.020]
+      - Relative death rate of stems as a function of DVS
+      - rel. death rate of stems as a function of DVS -; kg kg-1 d-1
+      - ['-', kg.kg-1.d-1]
+      RDRSTB:
+      - [0.00, 0.000, 1.50, 0.000, 1.5001, 0.020, 2.00, 0.020]
+      - relative death rate of roots as a function of DVS
+      - rel. death rate of roots as a function of DVS -; kg kg-1 d-1
+      - ['-', kg.kg-1.d-1]
+            # water use
+      CFET:
+      - 1.00
+      - correction factor transpiration rate
+      - correction factor transpiration rate
+      - ['-']
+      DEPNR:
+      - 2.00
+      - crop group number for soil water depletion
+      - crop group number for soil water depletion
+      - ['-']
+      IAIRDU:
+      - 0
+      - air ducts in roots present (=1) or not (=0)
+      - air ducts in roots present (=1) or not (=0)
+      - [NA]
+      IOX:
+      - 0
+      - Oxygen stress effect enabled (=1) or not (=0)
+      - No oxygen stress
+      - [NA]
+            # rooting
+      RDI:
+      - 10.0
+      - initial rooting depth
+      - initial rooting depth cm
+      - [cm]
+      RRI:
+      - 1.20
+      - maximum daily increase in rooting depth
+      - maximum daily increase in rooting depth cm d-1
+      - [cm.d-1]
+      RDMCR:
+      - 150.0
+      - maximum rooting depth
+      - maximum rooting depth cm
+      - [cm]
+            # nutrients
+            # maximum and minimum concentrations of N, P, and K
+            # in storage organs        in vegetative organs kg kg-1
+      NMINSO:
+      - 0.0060
+      NMINVE:
+      - 0.0180
+      NMAXSO:
+      - 0.0130
+      - maximum P concentration in storage organs [kg N kg-1 dry biomass]
+      NMAXVE:
+      - 0.0280
+      PMINSO:
+      - 0.0008
+      PMINVE:
+      - 0.0015
+      PMAXSO:
+      - 0.0018
+      - maximum P concentration in storage organs [kg P kg-1 dry biomass]
+      PMAXVE:
+      - 0.0032
+      KMINSO:
+      - 0.0060
+      KMINVE:
+      - 0.0180
+      KMAXSO:
+      - 0.0130
+      - maximum K concentration in storage organs [kg K kg-1 dry biomass]
+      KMAXVE:
+      - 0.0360
+      YZERO:
+      - 0.
+      NFIX:
+      - 0.00
+            # max. amount veg. organs at zero yield kg ha-1
+            # fraction of N-uptake from biol. fixation kg kg-1
+            # add parameter
+      DMV:
+      - 0
+      DMI:
+      - 1
+      DMII:
+      - 1
+      PD:
+      - 3
+      ROI:
+      - 0
+      STI:
+      - 0
+      TDWI:
+      - 0.51
+      FDI:
+      - [[0.000203862009073, 7.46998419558868e-05, 0, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None]]
+      DMCI:
+      - [[0.08, 0.08, 0.08, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None]]
+      FFI:
+      - [[0.0017262371295096, 0.0005335702996849, 0, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None]]
+      DOHFI:
+      - [[None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None],
+        [None, None, None, None, None, None], [None, None, None, None, None, None]]
+      RGRL:
+      - [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+      sample1:
+      - [0, 0, 0]
+      sample2:
+      - [[2, 3], [2, 3]]
+            #追加20221011
+      ASSIMI:
+      - [[2006/3/31, 20], [2006/4/1, 20], [2006/4/2, 20], [2006/4/3, 20], [2006/4/4,
+          20], [2006/4/5, 20], [2006/4/6, 20], [2006/4/7, 20], [2006/4/8, 20], [2006/4/9,20], [2006/4/10, 20], [2006/4/11, 20], [2006/4/12, 20], [2006/4/13, 20],
+        [2006/4/14, 20], [2006/4/15, 20], [2006/4/16, 20], [2006/4/17, 20], [2006/4/18,
+          20], [2006/4/19, 20], [2006/4/20, 20], [2006/4/21, 20], [2006/4/22, 20],
+        [2006/4/23, 20], [2006/4/24, 20], [2006/4/25, 20], [2006/4/26, 20], [2006/4/27,
+          20], [2006/4/28, 20], [2006/4/29, 20], [2006/4/30, 20], [2006/5/1, 20],
+        [2006/5/2, 20], [2006/5/3, 20], [2006/5/4, 20], [2006/5/5, 20], [2006/5/6,
+          20], [2006/5/7, 20], [2006/5/8, 20], [2006/5/9, 20], [2006/5/10, 20], [
+          2006/5/11, 20], [2006/5/12, 20], [2006/5/13, 20], [2006/5/14, 20], [2006/5/15,
+          20], [2006/5/16, 20], [2006/5/17, 20], [2006/5/18, 20], [2006/5/19, 20],
+        [2006/5/20, 20], [2006/5/21, 20], [2006/5/22, 20], [2006/5/23, 20], [2006/5/24,
+          20], [2006/5/25, 20], [2006/5/26, 20], [2006/5/27, 20], [2006/5/28, 20],
+        [2006/5/29, 20], [2006/5/30, 20], [2006/5/31, 20], [2006/6/1, 20], [2006/6/2,
+          20], [2006/6/3, 20], [2006/6/4, 20], [2006/6/5, 20], [2006/6/6, 20], [2006/6/7,
+          20], [2006/6/8, 20], [2006/6/9, 20], [2006/6/10, 20], [2006/6/11, 20], [
+          2006/6/12, 20], [2006/6/13, 20], [2006/6/14, 20], [2006/6/15, 20], [2006/6/16,
+          20], [2006/6/17, 20], [2006/6/18, 20], [2006/6/19, 20], [2006/6/20, 20],
+        [2006/6/21, 20], [2006/6/22, 20], [2006/6/23, 20], [2006/6/24, 20], [2006/6/25,
+          20], [2006/6/26, 20], [2006/6/27, 20], [2006/6/28, 20], [2006/6/29, 20],
+        [2006/6/30, 20], [2006/7/1, 20], [2006/7/2, 20], [2006/7/3, 20], [2006/7/4,
+          20], [2006/7/5, 20], [2006/7/6, 20], [2006/7/7, 20], [2006/7/8, 20], [2006/7/9,
+          20], [2006/7/10, 20], [2006/7/11, 20], [2006/7/12, 20], [2006/7/13, 20],
+        [2006/7/14, 20], [2006/7/15, 20], [2006/7/16, 20], [2006/7/17, 20], [2006/7/18,
+          20], [2006/7/19, 20], [2006/7/20, 20], [2006/7/21, 20], [2006/7/22, 20],
+        [2006/7/23, 20], [2006/7/24, 20], [2006/7/25, 20], [2006/7/26, 20], [2006/7/27,
+          20], [2006/7/28, 20], [2006/7/29, 20], [2006/7/30, 20], [2006/7/31, 20],
+        [2006/8/1, 20], [2006/8/2, 20], [2006/8/3, 20], [2006/8/4, 20], [2006/8/5,
+          20], [2006/8/6, 20], [2006/8/7, 20], [2006/8/8, 20], [2006/8/9, 20], [2006/8/10,
+          20], [2006/8/11, 20], [2006/8/12, 20], [2006/8/13, 20], [2006/8/14, 20],
+        [2006/8/15, 20], [2006/8/16, 20], [2006/8/17, 20], [2006/8/18, 20], [2006/8/19,
+          20], [2006/8/20, 20], [2006/8/21, 20], [2006/8/22, 20], [2006/8/23, 20],
+        [2006/8/24, 20], [2006/8/25, 20], [2006/8/26, 20], [2006/8/27, 20], [2006/8/28,
+          20], [2006/8/29, 20], [2006/8/30, 20], [2006/8/31, 20], [2006/9/1, 20],
+        [2006/9/2, 20], [2006/9/3, 20], [2006/9/4, 20], [2006/9/5, 20], [2006/9/6,
+          20], [2006/9/7, 20], [2006/9/8, 20], [2006/9/9, 20], [2006/9/10, 20], [
+          2006/9/11, 20], [2006/9/12, 20], [2006/9/13, 20], [2006/9/14, 20], [2006/9/15,
+          20], [2006/9/16, 20], [2006/9/17, 20], [2006/9/18, 20], [2006/9/19, 20],
+        [2006/9/20, 20], [2006/9/21, 20], [2006/9/22, 20], [2006/9/23, 20], [2006/9/24,
+          20], [2006/9/25, 20], [2006/9/26, 20], [2006/9/27, 20], [2006/9/28, 20],
+        [2006/9/29, 20], [2006/9/30, 20], [2006/10/1, 20], [2006/10/2, 20], [2006/10/3,
+          20], [2006/10/4, 20], [2006/10/5, 20], [2006/10/6, 20], [2006/10/7, 20],
+        [2006/10/8, 20], [2006/10/9, 20], [2006/10/10, 20], [2006/10/11, 20], [2006/10/12,
+          20], [2006/10/13, 20], [2006/10/14, 20], [2006/10/15, 20], [2006/10/16,
+          20], [2006/10/17, 20], [2006/10/18, 20], [2006/10/19, 20], [2006/10/20,
+          20]]
+#{'key1': 'value', 'key2': 'valuess'}
+      DOEFI:
+      - [[2006/03/24, 2006/03/25, 2006/03/26, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None], [None, None, None, None, None, None], [None, None, None,
+          None, None, None]]
+      DOELI:
+      - [['2006-02-10', '2006-02-13', '2006-02-16', '2006-02-19', '2006-02-22', '2006-02-25',
+          '2006-02-28'], ['2006-03-03', '2006-03-06', '2006-03-09', None, None, None,
+          None], ['2006-03-12', '2006-03-15', '2006-03-18', None, None, None, None],
+        ['2006-03-21', '2006-03-24', '2006-03-26', None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None]]
+      DOHLI:
+      - [[None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None]]
+      DVSFI:
+      - [[0.0300389748368984, 0.015100387902098, 0, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None], [None, None, None, None, None, None], [None, None,
+          None, None, None, None]]
+      DVSLI:
+      - [[0.966495957211469, 0.89978092656478, 0.833464098264258, 0.767453740510391,
+          0.701659300382343, 0.635991051541617, 0.570359747022458], [0.504676274902224,
+          0.438851314655598, 0.37279499199879, None, None, None, None], [0.306416530023656,
+          0.239623894407117, 0.172323430458103, None, None, None, None], [0.104419489732868,
+          0.035814043909522, 0.0, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None]]
+      LAI:
+      - [[0.0203326840588793, 0.0205464842553259, 0.0208400054945212, 0.0211691354730804,
+          0.0213523136853572, 0.02092688306473, 0.019049382091903], [0.0148325386039088,
+          0.0086053945175365, 0.002981068256228, None, None, None, None], [0.0004342038709975,
+          1.51912334005237e-05, 5.10196901181616e-08, None, None, None, None], [3.51715893625854e-12,
+          3.88502862592069e-19, 0, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None]]
+      LVI:
+      - [[0.653027104972378, 0.65995652737125, 0.669477077901125, 0.680179972788203,
+          0.686234029457279, 0.67275718907577, 0.612594863926835], [0.477146836659828,
+          0.276921773757592, 0.095967193800257, None, None, None, None], [0.0139841394527752,
+          0.000489494734132, 1.64468186436383e-06, None, None, None, None], [1.13407793643647e-10,
+          1.2527850256581199e-17, 0, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None]]
+      SLAI:
+      - [[0.031136049325, 0.031133087697646, 0.0311287818374947, 0.0311228457595529,
+          0.0311152095409277, 0.0311061510182734, 0.0310962250692441], [0.0310859134346629,
+          0.0310752013312343, 0.0310634365095069, None, None, None, None], [0.0310497800808592,
+          0.0310345946196133, 0.0310211477135093, None, None, None, None], [0.0310135638795539,
+          0.0310112076242573, 0.0308791998225565, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None], [None,
+          None, None, None, None, None, None], [None, None, None, None, None, None,
+          None], [None, None, None, None, None, None, None], [None, None, None, None,
+          None, None, None], [None, None, None, None, None, None, None], [None, None,
+          None, None, None, None, None], [None, None, None, None, None, None, None],
+        [None, None, None, None, None, None, None], [None, None, None, None, None,
+          None, None], [None, None, None, None, None, None, None], [None, None, None,
+          None, None, None, None], [None, None, None, None, None, None, None]]
+      CROP_END_TYPE:
+      - maturity
+      CROP_START_TYPE:
+      - sowing
+
+
+      'Unnamed: 1':
+
+        [[2006-07-01,-0.923990774],
+        [2006-07-02,12.14540946],
+        [2006-07-03,4.527365599],
+        [2006-07-04,9.911763102],
+        [2006-07-05,7.010882121],
+        [2006-07-06,3.638672566],
+        [2006-07-07,11.15061439],
+        [2006-07-08,8.279405358],
+        [2006-07-09,10.88127925],
+        [2006-07-10,8.785384189],
+        [2006-07-11,1.508129163],
+        [2006-07-12,1.944147683],
+        [2006-07-13,9.015605448],
+        [2006-07-14, 6.34384545],
+        [2006-07-15,6.647502591],
+        [2006-07-16,2.133112854],
+        [2006-07-17,9.296616386],
+        [2006-07-18,8.252076477],
+        [2006-07-19,9.338930238],
+        [2006-07-20,2.872446628],
+        [2006-07-21,9.405804988],
+        [2006-07-22,8.199265422],
+        [2006-07-23,5.978927629],
+        [2006-07-24,-0.98309795],
+        [2006-07-25,3.250432203],
+        [2006-07-26,5.416159351],
+        [2006-07-27,4.584477516],
+        [2006-07-28,2.211252465],
+        [2006-07-29,0.842469548],
+        [2006-07-30,6.407490321],
+        [2006-07-31,6.210965602],
+        [2006-08-01,0.075010238],
+        [2006-08-02,6.708291311],
+        [2006-08-03,6.270140779],
+        [2006-08-04,6.391764373],
+        [2006-08-05,6.145984164],
+        [2006-08-06,2.303272398],
+        [2006-08-07,7.568011611],
+        [2006-08-08,6.113113102],
+        [2006-08-09,6.981196114],
+        [2006-08-10,8.884849422],
+        [2006-08-11,2.207036887],
+        [2006-08-12,6.156240751],
+        [2006-08-13,7.028584711],
+        [2006-08-14,13.50246577],
+        [2006-08-15, 4.73113934],
+        [2006-08-16,8.059222513],
+        [2006-08-17,-1.15974163],
+        [2006-08-18,6.027521816],
+        [2006-08-19,11.38016875],
+        [2006-08-20,4.858394767],
+        [2006-08-21,-0.41023825],
+        [2006-08-22,1.546576215],
+        [2006-08-23, 7.34033808],
+        [2006-08-24,10.57080927],
+        [2006-08-25,6.444574316],
+        [2006-08-26, 8.66116678],
+        [2006-08-27,10.01654496],
+        [2006-08-28, 8.48094402],
+        [2006-08-29, 13.8911747],
+        [2006-08-30,8.256362353],
+        [2006-08-31,14.65088081],
+        [2006-09-01,15.16362819],
+        [2006-09-02,10.68100861],
+        [2006-09-03,15.11044969],
+        [2006-09-04,12.68791439],
+        [2006-09-05,18.40667425],
+        [2006-09-06, 16.6545443],
+        [2006-09-07,8.601710694],
+        [2006-09-08,7.661730298],
+        [2006-09-09,11.69941117],
+        [2006-09-10,1.135032157],
+        [2006-09-11,10.63545408],
+        [2006-09-12, 13.9516741],
+        [2006-09-13,15.12703553],
+        [2006-09-14,14.16390564],
+        [2006-09-15,18.04102602],
+        [2006-09-16, 4.46880743],
+        [2006-09-17,15.72779601],
+        [2006-09-18, 12.6933156],
+        [2006-09-19,1.629846857],
+        [2006-09-20,14.65641447],
+        [2006-09-21,12.58088642],
+        [2006-09-22, 11.9412615],
+        [2006-09-23,2.569863352],
+        [2006-09-24, 13.3866994],
+        [2006-09-25,8.783334037],
+        [2006-09-26,13.91611324],
+        [2006-09-27,0.682281557],
+        [2006-09-28,12.49282673],
+        [2006-09-29,17.81985459],
+        [2006-09-30,14.92436759],
+        [2006-10-01,0.724514524],
+        [2006-10-02,17.89299522],
+        [2006-10-03,0.465981247],
+        [2006-10-04,13.83939629],
+        [2006-10-05,16.91431523],
+        [2006-10-06,13.14303893],
+        [2006-10-07,6.071594421],
+        [2006-10-08,18.43022213],
+        [2006-10-09,16.41965198],
+        [2006-10-10,20.60496253],
+        [2006-10-11,17.21552527],
+        [2006-10-12,18.56320888],
+        [2006-10-13,22.76356275],
+        [2006-10-14,24.18198592],
+        [2006-10-15,15.82068916],
+        [2006-10-16,19.50845348],
+        [2006-10-17,18.07896136],
+        [2006-10-18,21.85656686],
+        [2006-10-19,21.31446174],
+        [2006-10-20,1.376053696],
+        [2006-10-21,7.274971574],
+        [2006-10-22,16.76631654],
+        [2006-10-23,8.604359251],
+        [2006-10-24,3.199062367],
+        [2006-10-25,1.017165908],
+        [2006-10-26,18.11015199],
+        [2006-10-27,16.99810849],
+        [2006-10-28,18.46908245],
+        [2006-10-29,18.52695381],
+        [2006-10-30,21.09298493],
+        [2006-10-31,27.18650751],
+        [2006-11-01,23.82639103],
+        [2006-11-02,25.78467842],
+        [2006-11-03,25.03558024],
+        [2006-11-04,27.21016484],
+        [2006-11-05,8.675172068],
+        [2006-11-06, 2.6986188],
+        [2006-11-07,24.10660125],
+        [2006-11-08,20.35581689],
+        [2006-11-09,18.74437894],
+        [2006-11-10,0.777787277],
+        [2006-11-11, 15.0266069],
+        [2006-11-12,18.43155858],
+        [2006-11-13,5.197554771],
+        [2006-11-14,22.37929172],
+        [2006-11-15,25.38739547],
+        [2006-11-16,24.11092316],
+        [2006-11-17, 25.3474384],
+        [2006-11-18,29.20415265],
+        [2006-11-19, 25.0006471],
+        [2006-11-20,28.02504028],
+        [2006-11-21,29.66828563],
+        [2006-11-22,31.32269724],
+        [2006-11-23,32.68742199],
+        [2006-11-24, 30.4543462],
+        [2006-11-25,29.78904985],
+        [2006-11-26,23.78344237],
+        [2006-11-27,29.51740859],
+        [2006-11-28,26.19384157],
+        [2006-11-29, 6.88759563],
+        [2006-11-30,23.24443741],
+        [2006-12-01,23.12997006],
+        [2006-12-02,13.64496844],
+        [2006-12-03,15.04074027],
+        [2006-12-04,28.99740564],
+        [2006-12-05,33.46164452],
+        [2006-12-06,30.97743648],
+        [2006-12-07,31.72488347],
+        [2006-12-08,20.40097428],
+        [2006-12-09,2.801729934],
+        [2006-12-10,33.44176582],
+        [2006-12-11,21.12270611],
+        [2006-12-12,25.32049884],
+        [2006-12-13,25.15765304],
+        [2006-12-14,21.26382494],
+        [2006-12-15,20.86860804],
+        [2006-12-16,22.95047086],
+        [2006-12-17,21.17971151],
+        [2006-12-18,24.26173025],
+        [2006-12-19, 13.3927663],
+        [2006-12-20,27.27668372],
+        [2006-12-21,30.83645513],
+        [2006-12-22,30.62227102],
+        [2006-12-23,25.20810214],
+        [2006-12-24,13.38831864],
+        [2006-12-25,30.20409115],
+        [2006-12-26,13.58307127],
+        [2006-12-27,0.366867861],
+        [2006-12-28, 14.7199038],
+        [2006-12-29,1.007735415],
+        [2006-12-30,11.28473576],
+        [2006-12-31,9.457858364],
+        [2007-01-01, 1.01122273],
+        [2007-01-02,3.086075493],
+        [2007-01-03,7.478199655],
+        [2007-01-04,8.613425404],
+        [2007-01-05,20.78628274],
+        [2007-01-06, 7.54511744],
+        [2007-01-07,6.710348951],
+        [2007-01-08,27.09147018],
+        [2007-01-09,-1.62837362],
+        [2007-01-10,10.01622121],
+        [2007-01-11,14.63599073],
+        [2007-01-12,8.638580433],
+        [2007-01-13,12.13075063],
+        [2007-01-14,10.59218307],
+        [2007-01-15, 13.8544907],
+        [2007-01-16,22.24905555],
+        [2007-01-17,5.144534943],
+        [2007-01-18,11.68075724],
+        [2007-01-19,11.21823763],
+        [2007-01-20,9.909373879],
+        [2007-01-21,10.25117688],
+        [2007-01-22,10.24671415],
+        [2007-01-23,15.60740563],
+        [2007-01-24,13.61018505],
+        [2007-01-25,13.18414096],
+        [2007-01-26,11.40863056],
+        [2007-01-27,12.19287581],
+        [2007-01-28,9.719767865],
+        [2007-01-29, 10.5611465],
+        [2007-01-30, 10.1320796],
+        [2007-01-31, 11.2143592],
+        [2007-02-01,15.15740363],
+        [2007-02-02,10.24963346],
+        [2007-02-03, 13.1642649],
+        [2007-02-04,10.68975431],
+        [2007-02-05,13.09041365],
+        [2007-02-06,11.55267403],
+        [2007-02-07,2.406680685],
+        [2007-02-08,11.48176899],
+        [2007-02-09,0.105153907],
+        [2007-02-10,13.54785516],
+        [2007-02-11,14.02205081],
+        [2007-02-12, 13.4228369],
+        [2007-02-13,15.44330217],
+        [2007-02-14,13.27910479],
+        [2007-02-15,14.77866883],
+        [2007-02-16,12.22517899],
+        [2007-02-17, 10.7882641],
+        [2007-02-18,11.25588826],
+        [2007-02-19,10.32387509],
+        [2007-02-20, 11.0776942],
+        [2007-02-21,10.94491332],
+        [2007-02-22,11.32649216],
+        [2007-02-23,8.554646839],
+        [2007-02-24,10.91932938],
+        [2007-02-25,12.47540493],
+        [2007-02-26,14.27004794],
+        [2007-02-27,11.99483647],
+        [2007-02-28,8.925263684],
+        [2007-03-01,12.39013692],
+        [2007-03-02,11.47199779],
+        [2007-03-03,12.71952199],
+        [2007-03-04,8.967631125],
+        [2007-03-05, 2.95381476],
+        [2007-03-06,3.683455847],
+        [2007-03-07,4.831167564],
+        [2007-03-08,10.06652258],
+        [2007-03-09,11.39229771],
+        [2007-03-10,19.54634343],
+        [2007-03-11,12.65532109],
+        [2007-03-12,8.697828762],
+        [2007-03-13,12.10807008],
+        [2007-03-14,15.09224444],
+        [2007-03-15,10.21043513],
+        [2007-03-16,12.37669756],
+        [2007-03-17,1.905797068],
+        [2007-03-18,6.413234831],
+        [2007-03-19,8.508976587],
+        [2007-03-20,10.69812363],
+        [2007-03-21,12.59123734],
+        [2007-03-22,13.96424996],
+        [2007-03-23,9.287626194],
+        [2007-03-24,4.937756706],
+        [2007-03-25,12.23031586],
+        [2007-03-26,12.28377736],
+        [2007-03-27,11.92483377],
+        [2007-03-28,9.671097065],
+        [2007-03-29,9.82937268],
+        [2007-03-30,12.43139754],
+        [2007-03-31,7.918792694],
+        [2007-04-01,26.05542931],
+        [2007-04-02,12.79509717],
+        [2007-04-03,4.848592327],
+        [2007-04-04,4.195517197],
+        [2007-04-05,5.280366297],
+        [2007-04-06,13.9062464],
+        [2007-04-07,12.12497333],
+        [2007-04-08,12.29417273],
+        [2007-04-09,6.197344256],
+        [2007-04-10,12.63010036],
+        [2007-04-11,9.073134452],
+        [2007-04-12,11.16269827],
+        [2007-04-13,8.380745236],
+        [2007-04-14,7.606629722],
+        [2007-04-15,7.648732049],
+        [2007-04-16,13.43206073],
+        [2007-04-17,14.15474415],
+        [2007-04-18,14.00714484],
+        [2007-04-19,12.32705943],
+        [2007-04-20,9.995301461],
+        [2007-04-21,8.833985121],
+        [2007-04-22,12.99892256],
+        [2007-04-23,12.79691354],
+        [2007-04-24,14.06333426],
+        [2007-04-25,12.30798807],
+        [2007-04-26, 13.2439],
+        [2007-04-27,10.1393076],
+        [2007-04-28,19.51009356],
+        [2007-04-29,18.08079447],
+        [2007-04-30,14.88847502],
+        [2007-05-01,13.61038966],
+        [2007-05-02,18.27645916],
+  Varieties:
+    tomato_01:
+      <<: *tomato
+      a:
+      - 0
+      - a
+      - [C.d]
