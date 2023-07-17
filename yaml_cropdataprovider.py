@@ -24,7 +24,7 @@ from ..util import version_tuple
 
 
 class YAMLCropDataProvider(MultiCropDataProvider):
-    
+
     HTTP_OK = 200
     current_crop_name = None
     current_variety_name = None

@@ -101,44 +101,44 @@ class Tomgrosim(SimulationObject):
         r = self.rates
         k = self.kiosk
         self.pheno.calc_rates(day,drv)
-        
+
         # Relative growth rate (RGR) of plant
         # RGRL is the list of RGRs
         RGR = k.DMI / k.TDM
         k.RGRL.insert(0, RGR)
-        
+
         # Potential assimilation
 
         # t_year = day.strftime("%Y")
         # t_month = day.strftime("%m").lstrip("0")
         # t_day = day.strftime("%d").lstrip("0")
         # without_0day = t_year + "/" + t_month + "/" + t_day
-        
+
         # if day < date(2006,7,1):
-            #3か月は仮データでシミュレーション上で大きくなるまで待機
-            #ここで実測光合成量をyamlから取得している
-        def assim_get(Gass_list,day):
-            t_year = day.strftime("%Y")
-            t_month = day.strftime("%m").lstrip("0")
-            t_day = day.strftime("%d").lstrip("0")
-            without_0day = t_year + "/" + t_month + "/" + t_day    
-            for row in range(len(Gass_list)):
-                tmp_day = Gass_list[row][0]
-                if tmp_day == str(without_0day):
-                    return Gass_list[row][-1]
-        # k.GASS = self.assim(day, drv) + k.ASA
-        
-        #単位面積当たりの日積算光合成量　[gCH2O m-2 d-1] = チャンバ日積算光合成量　[mol d-1] *30 [gC-H2O mol-1] / 2 [/plant] *p.PD　[plant m-2]
-        k.GASS = assim_get(k.ASSIM,day) + k.ASA#[gCH2O m-2 d-1]
-        # print("7月以前",day)
-        # Respiration
-        PMRES = self.mres(day, drv)
-        k.MRES  = min(k.GASS, PMRES)
-                
-        # Net available assimilates
-        # k.ASRC  = k.GASS - k.MRES
-        k.ASRC  = k.GASS
-        
+        #     #3か月は仮データでシミュレーション上で大きくなるまで待機
+        #     #ここで実測光合成量をyamlから取得している
+        #     def assim_get(Gass_list,day):
+        #         t_year = day.strftime("%Y")
+        #         t_month = day.strftime("%m").lstrip("0")
+        #         t_day = day.strftime("%d").lstrip("0")
+        #         without_0day = t_year + "/" + t_month + "/" + t_day
+        #         for row in range(len(Gass_list)):
+        #             tmp_day = Gass_list[row][0]
+        #             if tmp_day == str(without_0day):
+        #                 return Gass_list[row][-1]
+        # # k.GASS = self.assim(day, drv) + k.ASA
+
+        # #単位面積当たりの日積算光合成量　[gCH2O m-2 d-1] = チャンバ日積算光合成量　[mol d-1] *30 [gC-H2O mol-1] / 2 [/plant] *p.PD　[plant m-2]
+        #     k.GASS = assim_get(k.ASSIM,day) + k.ASA#[gCH2O m-2 d-1]
+        #     # print("7月以前",day)
+        #     # Respiration
+        #     PMRES = self.mres(day, drv)
+        #     k.MRES  = min(k.GASS, PMRES)
+
+        #     # Net available assimilates
+        #     # k.ASRC  = k.GASS - k.MRES
+        #     k.ASRC  = k.GASS
+
         def ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF):
             REFGR = 0.5
             SCP = 0.15
@@ -182,45 +182,44 @@ class Tomgrosim(SimulationObject):
                 PGROS = PGROS + ((1 - FSLLA) * ASSSH + FSLLA * ASSSL) * WGAUS3[i]
             PGROS_ = PGROS * LAI
             return PGROS_
-        
-        assim_calculation= "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/df_assim_calculation(EFF,PGMAX).csv"
+
+        assim_calculation= "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/df_assim_calculation(EFF,PGMAX).csv"
         df_assim_calculation = pd.read_csv(assim_calculation)
-        # date_list = df_assim_calculation["date"].values.tolist() 
-        # date_list = list(dict.fromkeys(date_list))
+
 
         # if day >= date(2006,7,1):
-        #     tmp_GASS = 0
-        #     # hour = list(df_assim_calculation.query('date == "2006/7/1" and h>0')["hour"])
-        #     sday = day.strftime("%Y/%#m/%#d")
-        #     hour = list(df_assim_calculation.query('date == @sday and h>0')["hour"])
-        #     LAI = k.LAI
-        #     for i in hour:
-        #         tmp = (df_assim_calculation.query('date == @sday and hour==@i'))
-        #         SINELV = tmp["h"].iloc[-1]
-        #         EFF = tmp["EFF"].iloc[-1]
-        #         PGMAX = tmp["PGMAX"].iloc[-1]
-        #         PARDIR = tmp["PARDIR"].iloc[-1]
-        #         PARDIF = tmp["PARDIF"].iloc[-1]
-        #         PGROS = ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF)
-        #         PGROS = PGROS*7200
-        #         tmp_GASS += PGROS
-        #     tmp_GASS = tmp_GASS/1000/44*30
-        #     #mgCO2をgにするために1000で割り
-        #     k.GASS = tmp_GASS
-        #     print("7月以降",day)
-        #     print("k.GASS",k.GASS)
-            
-        #     # Respiration
-        #     PMRES = self.mres(day, drv)
-        #     k.MRES  = min(k.GASS, PMRES)
-                    
-        #     # Net available assimilates
-        #     k.ASRC  = k.GASS - k.MRES
-            
+        tmp_GASS = 0
+        # hour = list(df_assim_calculation.query('date == "2006/7/1" and h>0')["hour"])
+        sday = day.strftime("%Y/%#m/%#d")
+        hour = list(df_assim_calculation.query('date == @sday and h>0')["hour"])
+        LAI = k.LAI
+        for i in hour:
+            tmp = (df_assim_calculation.query('date == @sday and hour==@i'))
+            SINELV = tmp["h"].iloc[-1]
+            EFF = tmp["EFF"].iloc[-1]
+            PGMAX = tmp["PGMAX"].iloc[-1]
+            PARDIR = tmp["PARDIR"].iloc[-1]
+            PARDIF = tmp["PARDIF"].iloc[-1]
+            PGROS = ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF)
+            PGROS = PGROS*7200
+            tmp_GASS += PGROS
+        tmp_GASS = tmp_GASS/1000/44*30
+        #mgCO2をgにするために1000で割り
+        k.GASS = tmp_GASS
+        # print("7月以降",day)
+        # print("k.GASS",k.GASS)
+
+        # Respiration
+        PMRES = self.mres(day, drv)
+        k.MRES  = min(k.GASS, PMRES)
+
+        # Net available assimilates
+        k.ASRC  = k.GASS - k.MRES
+
         # Potential growth rate
         self.so_dynamics.calc_potential(day, drv)
         self.lv_dynamics.calc_potential(day, drv)
-        
+
         # DM partitioning factors (pf), conversion factor (CVF), dry matter increase (DMI)
         pf = self.part.calc_rates(day, drv)
         k.CVF = 1./((pf.FL/p.CVL + pf.FS/p.CVS + pf.FO/p.CVO) *
@@ -279,7 +278,7 @@ class Tomgrosim(SimulationObject):
 
         # total gross assimilation and maintenance respiration
         s.GASST += k.GASS
-        
+
         s.MREST += k.MRES
 
     @prepare_states

@@ -36,15 +36,14 @@ def my_on_CROP_START(self, day, crop_name=None, variety_name=None,
     # self.parameterprovider.set_active_crop(crop_name, variety_name, crop_start_type,
     #                                         crop_end_type)
     self.crop = self.mconf.CROP(day, self.kiosk, self.parameterprovider)
-    
+
 Engine._on_CROP_START = my_on_CROP_START
 
 
 
-class sample(Engine):
-    config = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/sample.conf"
+class tomatomato(Engine):
+    config = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/tomatomato.conf"
 
     def __init__(self, parameterprovider, weatherdataprovider, agromanagement):
         Engine.__init__(self, parameterprovider, weatherdataprovider, agromanagement,
                         config=self.config)
-
