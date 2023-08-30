@@ -14,7 +14,7 @@ class Simple_Root_Dynamics(SimulationObject):
 
     class Parameters(ParamTemplate):
         ROI = Float(-99.) # Initial root dry mass
-        
+
     class RateVariables(RatesTemplate):
         pass
 
@@ -23,7 +23,8 @@ class Simple_Root_Dynamics(SimulationObject):
         TWRO = Float(-99) # Root dry mass
         GRRO = Float(-99.) # Growth rate of root dry mass
 
-    def initialize(self, day, kiosk, parameters):
+    def initialize(self, day, kiosk, parameters,cropinitiallist):
+
         """
         :param day: start date of the simulation
         :param kiosk: variable kiosk of this PCSE  instance
@@ -36,7 +37,8 @@ class Simple_Root_Dynamics(SimulationObject):
 
         # INITIAL STATES
         params = self.params
-        WRO = params.ROI
+        # WRO = params.ROI
+        WRO = cropinitiallist["ROI"]
         TWRO = WRO
         # self.states = self.StateVariables(kiosk, publish=["TWRO","WRO"],
         #                                   TWRO=TWRO,WRO=WRO)
@@ -59,8 +61,4 @@ class Simple_Root_Dynamics(SimulationObject):
         k = self.kiosk
 
         k.WRO += k.GRRO
-        k.TWRO = k.WRO        
-
-
-        # states.WRO += rates.GRRO
-        # states.TWRO = states.WRO
+        k.TWRO = k.WRO

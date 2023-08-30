@@ -17,6 +17,7 @@ import os
 from pcse.fileinput import ExcelWeatherDataProvider,PCSEFileReader,CABOWeatherDataProvider
 import pandas as pd
 import numpy as np
+
 #%%
 class DVS_Phenology(SimulationObject):
     class Parameters(ParamTemplate):
@@ -38,21 +39,19 @@ class DVS_Phenology(SimulationObject):
         DVR     = Float(-99.)  # development rate of a plant
         DVRF    = Instance(list)  # development rate of fruits
 
-    def initialize(self, day, kiosk, parvalues):
-        
+    def initialize(self, day, kiosk, parvalues,cropinitiallist):
+
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
         self._connect_signal(self._on_CROP_FINISH, signal=signals.crop_finish)
-        DVS = self.params.DVSI
-        # DVSF = self.params.DVSFI
-        DVSF = self.params.DVSFI
-        DOEL = self.params.DOELI
-        DOEF = self.params.DOEFI
 
-        DVSF = [list(map(lambda x: None if x == 'None' else x, row)) for row in DVSF]
-        DOEL = [list(map(lambda x: None if x == 'None' else x, row)) for row in DOEL]
-        DOEF = [list(map(lambda x: None if x == 'None' else x, row)) for row in DOEF]
-
+        DVS = cropinitiallist["DVSI"]
+        DVSF = cropinitiallist["DVSFI"]
+        DOEL = cropinitiallist["DOELI"]
+        DOEF = cropinitiallist["DOEFI"]
+        DVSF = [list(map(lambda x: x if x >= 0  else None, row)) for row in DVSF]
+        DOEL = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOEL]
+        DOEF = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOEF]
 
         self.states = self.StateVariables(kiosk, publish=["DVS","DVSF","DOEL","DOEF","DVRF","DVR"],
                                           DVS=DVS, DVSF=DVSF,DVRF=[],DVR=None,
@@ -72,11 +71,9 @@ class DVS_Phenology(SimulationObject):
         k.DVR = self._dev_rate_plant(drvTEMP,k.DVS)
 
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
-        # The function to calculate DVRF is applied to each element of s.DVSF
 
         k.DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
-        # DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
-  
+
         msg = "Finished rate calculation for %s"
         self.logger.debug(msg % day)
 
@@ -94,8 +91,6 @@ class DVS_Phenology(SimulationObject):
     def _dev_rate_fruit(self,drvTEMP, sDVSF):
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # De Koning (1994, Ph.D. thesis) (and Heuvelink (1996, Annals of Botany)) used the following equation for DVRF. It described fruit growth period in cv. Counter quite well (unpublished research, Heuvelink, 1996).
-        # rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
-        # return(rDVRF)
         if sDVSF == None:
             return(None)
         else:
@@ -117,15 +112,8 @@ class DVS_Phenology(SimulationObject):
                 return sum(x)
 
         # Integrate phenologic states
-        
         k.DVS += k.DVR
-        
-        # k.DVSF = list(map(lambda l1, l2: [sum(x) for x in zip(l1, l2)], k.DVSF, k.DVRF))
-        
         k.DVSF = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.DVSF, k.DVRF))
-
-        
-
 
         # 1) Add the flower anthesis after the 2nd flower
         # If 1st flower already anthesis, then add the anthesis date of following flowers.
@@ -138,91 +126,53 @@ class DVS_Phenology(SimulationObject):
         # Here, when a 1st flower of a truss anthesis, the 1st leaf of the 3-trusses-above turss emerges.
         # 3) Add the leaf emergence after the 2nd leaf
         #
-        # for i in range(0, int(s.DVS)):
 
         for i in range(0, int(k.DVS)):
             # 1)
-            # if s.DOEF[i][0] != None:
             if k.DOEF[i][0] != None:
-                # for j in range(1, len(s.DOEF[i])):
-                # for j in range(1, len(k.DOEF[i])):
                 for j in range(len(k.DOEF[i])):
-                    # if s.DOEF[i][j] != None:
                     if k.DOEF[i][j] != None:
-                        # continue
                         pass
                     else:
-                        # s.DOEF[i][j] = day
-                        # k.DOEF[i][j] = day
                         k.DOEF[i][j] = day
-                        # k.DOEF[i][j-1] = day
-                        #1212追加 果実の重さの初期値を追加
                         k.FF[i][j] = 0.1
                         k.FD[i][j] = 0.008
-                        # k.FF[i][j-1] = 0.1
-                        # k.FD[i][j-1] = 0.008
-                        #0110追加 果実のDVSを追加
                         k.DVSF[i][j] = 0
                         break
             # 2)
             else:
                 k.DOEF[i][0] = day
-                #0110追加
                 k.FF[i][0] = 0.1
                 k.FD[i][0] = 0.008
                 k.DVSF[i][0] = 0
-                # if s.DOEL[i+3][0] == None:
                 if k.DOEL[i+3][0] == None:
-                    # s.DOEL[i+3][0] = day
                     k.DOEL[i+3][0] = day
-                    
+
 
         # 3)
-        # if s.DVS % 1 >= 2/3:
         if k.DVS % 1 >= 2/3:
             nLEAF = 3
-        # elif s.DVS % 1 >= 1/3:
         elif k.DVS % 1 >= 1/3:
             nLEAF = 2
         else:
             nLEAF = 1
-        # for i in range(0, int(s.DVS+2)):
         for i in range(0, int(k.DVS+2)):
             for j in range(0,3):
-                # if s.DOEL[i][j] == None:
                   if k.DOEL[i][j] == None:
-                    # s.DOEL[i][j] = day
                     k.DOEL[i][j] = day
         i = int(k.DVS) + 3
-        # if s.DOEL[i][0] == None:
-        #     s.DOEL[i][0] = day
-        # if s.DOEL[i][1] == None and nLEAF >= 2:
-        #     s.DOEL[i][1] = day
-        # if s.DOEL[i][2] == None and nLEAF == 3:
-        #     s.DOEL[i][0] = day
         if k.DOEL[i][0] == None:
             k.DOEL[i][0] = day
-            #1212追加0.0001は仮置き
             k.LA[i][0] = 0.0001
             k.LV[i][0] = 0.01
         if k.DOEL[i][1] == None and nLEAF >= 2:
             k.DOEL[i][1] = day
-            #1212追加0.0001は仮置き
             k.LA[i][1] = 0.0001
             k.LV[i][1] = 0.01
         if k.DOEL[i][2] == None and nLEAF == 3:
             k.DOEL[i][2] = day
-            #1212追加0.0001は仮置き
             k.LA[i][2] = 0.0001
             k.LV[i][2] = 0.01
-        # if k.DOEL[i][2] == None and nLEAF == 3: 
-        #     k.DOEL[i][2] = day
-        #     #1212追加0.0001は仮置き
-        #     k.LA[i][2] = 0.0001
-        #     k.LV[i][2] = 0.01
-
-
-
 
         msg = "Finished state integration for %s"
         self.logger.debug(msg % day)
@@ -234,4 +184,3 @@ class DVS_Phenology(SimulationObject):
         """
         if finish_type in ['harvest', 'earliest']:
             self._for_finalize["DOH"] = day
-

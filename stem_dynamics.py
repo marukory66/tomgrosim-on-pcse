@@ -13,17 +13,17 @@ class Simple_Stem_Dynamics(SimulationObject):
     class Parameters(ParamTemplate):
         STI = Float(-99.) # Initial stem dry mass
         WSTI = Float(-99)
-        
+
     class RateVariables(RatesTemplate):
         pass
-        
+
     class StateVariables(StatesTemplate):
         # ST = Float(-99) # Stem dry mass
         TWST = Float(-99) # Stem dry mass
         WST = Float(-99)
         GRST = Float(-99.) # Growth rate of stem dry mass
 
-    def initialize(self, day, kiosk, parameters):
+    def initialize(self, day, kiosk, parameters,cropinitiallist):
 
         self.params = self.Parameters(parameters)
         self.rates = self.RateVariables(kiosk)
@@ -31,8 +31,7 @@ class Simple_Stem_Dynamics(SimulationObject):
 
         # INITIAL STATES
         params = self.params
-        # ST = params.STI
-        WST = params.WSTI
+        WST = cropinitiallist["WSTI"]
         TWST = WST
 
         self.states = self.StateVariables(kiosk, publish=["GRST","WST","TWST"],
@@ -50,8 +49,5 @@ class Simple_Stem_Dynamics(SimulationObject):
         rates = self.rates
         states = self.states
         k = self.kiosk
-
-        # states.WST += rates.GRST
-        # states.TWST = rates.WST
         k.WST += k.GRST
         k.TWST = k.WST

@@ -18,23 +18,6 @@ from timezonefinder import TimezoneFinder
 from scipy.optimize import minimize_scalar
 import copy
 
-
-"""
-prec_no: str
-            Text string of 2 digits number of each prefecture
-        block_no: str
-            Text string of 4 or 5 digits number of each region
-        start_date: datetime.date
-        end_data: datetime.date
-"""
-#これをコマンドで打たせたい
-# g_prec_no = "51"
-# g_block_no = "47636"
-# g_start_date = datetime.date(2019,12,25)
-# g_end_date = datetime.date(2020,6,5)
-# #plantdataの2時間応答のexcelファイル用引数
-# plantdata_excel = ""
-
 class Diffusion:
     BASE_URL = "http://www.data.jma.go.jp/obd/stats/etrn/view/hourly_%s1.php?prec_no=%s&block_no=%s&year=%s&month=%s&day=%s&view="
 
@@ -249,4 +232,3 @@ def get_2hour_ave(df):
 
         df_2hour.loc[ii] = [date,hour,h,FRACDF]
     return df_2hour
-

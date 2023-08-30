@@ -18,10 +18,7 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
         RML = Float(-99.)
         RMS = Float(-99.)
         RMO = Float(-99.)
-        # RFSETB = AfgenTrait()
         COEFRGR = Float(-99.)
-        # RGR = Float(-99.)
-
 
     class RateVariables(RatesTemplate):
         pass
@@ -55,6 +52,4 @@ class TOMGROSIM_Maintenance_Respiration(SimulationObject):
 
         kk.RGR = sum(kk.RGRL[0:6]) / len(kk.RGRL[0:6])
         kk.PMRES = RMRES * TEFF * (1 - exp(-p.COEFRGR * kk.RGR))
-        print("kk.PMRES",kk.PMRES)
         return kk.PMRES
-

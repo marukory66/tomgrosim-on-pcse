@@ -60,23 +60,23 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
     class RateVariables(RatesTemplate):
         pass
 
-    def initialize(self, day, kiosk, parvalues):
+    def initialize(self, day, kiosk, parvalues,cropinitiallist):
 
         self.kiosk  = kiosk
         self.params = self.Parameters(parvalues)
 
         # CALCULATE INITIAL STATE VARIABLES
         params = self.params
-        # Initial leaf biomass, leaf area, and leaf age
-        LV = params.LVI # Dry weights of the leaves that have not generated yet are 0.
-        LA = params.LAI # List of initial leaf area
-        # SLA = params.SLAI  # SLAs of the leaves that have not generated yet are 0.
-        DOHL = params.DOHLI
-        
-        DOHL = [list(map(lambda x: None if x == 'None' else x, row)) for row in DOHL]
-        LA = [list(map(lambda x: None if x == 'None' else x, row)) for row in LA]
-        LV = [list(map(lambda x: None if x == 'None' else x, row)) for row in LV]
+        # # Initial leaf biomass, leaf area, and leaf age
 
+        # Initial leaf biomass, leaf area, and leaf age
+        LV = cropinitiallist["LVI"] # Dry weights of the leaves that have not generated yet are 0.
+        LA = cropinitiallist["LAI"] # List of initial leaf area
+        DOHL = cropinitiallist["DOHLI"]
+
+        DOHL = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOHL]
+        LA = [list(map(lambda x: x if x >= 0  else None, row)) for row in LA]
+        LV = [list(map(lambda x: x if x >= 0  else None, row)) for row in LV]
         WLV = 0.
         DWLV = 0.
         LAI = 0.
@@ -85,8 +85,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                 if DOHL[i][j] != None: # Harvested = Dead
                     DWLV += float(LV[i][j])
                 else: # Not harvested yet = living
-                    # WLV += float(LV[i][j])
-                    # LAI += float(LA[i][j])
                     if LV[i][j]== None:
                         pass
                     else:
@@ -101,35 +99,30 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                                           LAI=LAI, WLV=WLV, DWLV=DWLV, TWLV=TWLV,GRLV=[],SSLA=None,
                                           DOHL=DOHL)
         self.rates = self.RateVariables(kiosk)
+
     @prepare_rates
     def calc_potential(self, day, drv):
         r = self.rates
         p = self.params
         k = self.kiosk
         # List of harvested (0: harvested, 1: not yet harvested)
-        # LOH = k.DOHL
         LOH = copy.deepcopy(k.DOHL)
         for i in range(0, len(k.DOHL)):
             for j in range(0, len(k.DOHL[i])):
-                # if k.DOHL[i][j] == None:
                 if k.DOHL[i][j] == None:
                     LOH[i][j] = 1
                 else:
-                    LOH[i][j] = 0        
-        
+                    LOH[i][j] = 0
+
         # Leaf age
-        # k.LVAGE = k.DOEL
         k.LVAGE = copy.deepcopy(k.DOEL)
-                
         for i in range(0, len(k.DOEL)):
             for j in range(0, len(k.DOEL[i])):
                 if k.DOEL[i][j] != None:
                     td = datetime.strptime(str(k.DOEL[i][j]),'%Y-%m-%d' )
-                    # td = datetime.strptime((k.DOEL[i][j]),'%Y-%m-%d' )
-                    
+
                     td = td.date()
                     age_days = day - td
-                    # ↓経過日数を数値に変換する
                     age_days = age_days/timedelta(days=1)
                     k.LVAGE[i][j] = age_days
                 else:
@@ -144,7 +137,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
             FTEMP = 1.0 + 0.0281 * (drv.TEMP - 28)
         else:
             FTEMP = 1.0 - 0.0455 * (drv.TEMP - 28)
-        #記載が無いため仮置き 400固定でOK
         drv.CO2 = 400
         FCO2 = 1 + 0.003 * (drv.CO2 - 350)
 
@@ -165,7 +157,7 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.MPGRLV = [list(map(lambda x: x / k.SSLA, row)) for row in k.POL]
         k.MPGRLV = [list(map(lambda x: (1 + p.FRPET) * x, row)) for row in k.MPGRLV] # Include petiole (partitioning ratio of dry matter, petiold:leaf = FRPET:1)
         k.PGRLV = [list(map(lambda x: k.CAF * x, row)) for row in k.MPGRLV]
-        
+
     @prepare_rates
     def calc_rates(self, day, drv ):
         r = self.rates
@@ -191,12 +183,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                 return sum(x)
         # Update leaf biomass states
         k.LV = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LV, k.GRLV))
-        
+
         # Update leaf area
         k.LA = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LA, k.ACL))
-        
+
         # Update leaf SLA
-        # k.SLA = [[a / b for a, b in zip(*rows)] for rows in zip(k.LA, k.LV)]
         k.SLA = [[None if a==None or b==None else a / b for a, b in zip(*rows) ] for rows in zip(k.LA, k.LV)]
 
 
@@ -204,13 +195,11 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.WLV = 0.
         k.DWLV = 0.
         k.LAI = 0.
-        
-        
+
+
 
         for i in range(0, len(k.LV)):
             for j in range(0, len(k.LV[i])):
-                # if k.DOHL[i][j] != None: #already harvested (= dead), DOHL[i][j] == None: not harvested yet (= living).
-                #     k.DWLV += k.LV[i][j]
                 if k.DOHL[i][j] != None: #already harvested (= dead), DOHL[i][j] == None: not harvested yet (= living).
                     if i >= 1 and j >= 3:
                         pass
@@ -223,17 +212,12 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                         k.WLV += k.LV[i][j]
                         k.LAI += k.LA[i][j]
         k.TWLV = k.WLV + k.DWLV
-        print("LAI",k.LAI)
         # Harvest scheme for updating DOHL
         # DOHL ... If the development stage (DVSF) of the 1st fruit of the truss becomes over 0.8, then the leaves on the truss will be removed.
-        # for i in range(0, len(k.DOHL)):
-        #     for j in range(0, len(k.DOHL[i])):
-        #         if k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
-        #             k.DOHL[i][j] = day
         for i in range(0, len(k.DOHL)):
             for j in range(0, len(k.DOHL[i])):
                 if k.DVSF[i][0] == None :
-                    pass 
+                    pass
                 elif k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
                     k.DOHL[i][j] = day
                 else:

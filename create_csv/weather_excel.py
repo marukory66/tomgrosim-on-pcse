@@ -5,14 +5,15 @@ from datetime import datetime
 from datetime import date as dt
 import openpyxl as xl
 
-chamber_explantory = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/plantation_data/tomato_chamber_explanatory.csv"
-df_chamber_explantory = pd.read_csv(chamber_explantory)
+# chamber_explantory = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/plantation_data/tomato_chamber_explanatory.csv"
+# df_chamber_explantory = pd.read_csv(chamber_explantory)
 
-nl1 = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/nl1.xls"
-df_nl1 = pd.read_excel(nl1)
+# nl1 = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse/test_data/nl1.xls"
+# df_nl1 = pd.read_excel(nl1)
 
 
 def temperature_outside_chamber(chamber_explantory,nl1):
+    df_chamber_explantory = pd.read_csv(chamber_explantory)
     date = df_chamber_explantory["Date"]
     IRRAD = df_chamber_explantory["Solar.radiation.accu"]
     TMIN = df_chamber_explantory["Temperature.outside.chamber.nightave"]
@@ -30,6 +31,9 @@ def temperature_outside_chamber(chamber_explantory,nl1):
         # date[i].value = datetime(int(y),int(m),int(d))
         date[i] = date[i].to_pydatetime()
     #chamber_explantoryのデータに差し替える
+
+    df_nl1 = pd.read_excel(nl1)
+
     for i in range(len(date)):
         df_nl1.iloc[11+i,0] = date[i]
         df_nl1.iloc[11+i,1] = IRRAD[i]
@@ -38,8 +42,8 @@ def temperature_outside_chamber(chamber_explantory,nl1):
     return df_nl1
 
 
-df_nl1 = temperature_outside_chamber(df_chamber_explantory,df_nl1)
-df_nl1.to_excel('C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/df.xls',index = False)
+# df_nl1 = temperature_outside_chamber(df_chamber_explantory,df_nl1)
+# df_nl1.to_excel('C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/df.xls',index = False)
 
 
 #%%

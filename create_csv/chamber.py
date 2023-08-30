@@ -1,13 +1,6 @@
 #%%
 import pandas as pd
 
-plantdata_excel = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/plantation_data/pi01_20191023_2hour - コピー.csv"
-
-
-
-
-df_2hour = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/Diffusion_2hour.csv"
-
 def pick_up_chamber_data(plantdata_excel,df_2hour):
 #チャンバデータの加工
     df_plantdata_excel = pd.read_csv(plantdata_excel)
@@ -32,11 +25,6 @@ def pick_up_chamber_data(plantdata_excel,df_2hour):
         PARDIF = PAR*FRACDF
         df_plantdata_excel_date["PARDIR"].loc[i1] = PARDIR
         df_plantdata_excel_date["PARDIF"].loc[i1] = PARDIF
-
     df = df_plantdata_excel_date.dropna(how="any",axis=0)
     df = (df.loc[:,~df.columns.duplicated()])
-
     return df
-
-# df = pick_up_chamber_data(plantdata_excel,df_2hour)
-# df.to_csv('C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/df.csv')

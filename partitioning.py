@@ -67,17 +67,17 @@ class DVS_Partitioning(SimulationObject):
 
         k.TPGRLV = sum(map(sum, k.PGRLV)) # Total potential growth rate of all the leaves
         k.TMPGRLV = sum(map(sum, k.MPGRLV)) # Total potential growth rate of all the leaves
-        
+
         k.PGRFR = [list(map(lambda x: 0 if x == None else x, row)) for row in k.PGRFR]
         k.MPGRFR = [list(map(lambda x: 0 if x == None else x, row)) for row in k.MPGRFR]
-        
+
         k.TPGRFR = sum(map(sum, k.PGRFR)) # Total potential growth rate of all the fruits
         k.TMPGRFR = sum(map(sum, k.MPGRFR)) # Total potential growth rate of all the fruits
-        
+
         k.PGRFR = [list(map(lambda x: None if x == 0 else x, row)) for row in k.PGRFR]
         k.MPGRFR = [list(map(lambda x: None if x == 0 else x, row)) for row in k.MPGRFR]
-                
-        
+
+
 
 
 
@@ -94,4 +94,3 @@ class DVS_Partitioning(SimulationObject):
         k.TMPGR = k.TMPGRLV + k.TMPGRLV * 3/7 + k.TMPGRLV * 1.5/7 + k.TMPGRFR # Total maximum potential growth rate of all the organs
 
         return k.PF
-        # return self.rates.PF

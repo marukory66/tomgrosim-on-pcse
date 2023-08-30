@@ -2,15 +2,16 @@
 #%%
 # Naomichi Fujiuchi (naofujiuchi@gmail.com), April 2022
 # This is a derivative work by Fujiuchi (GNU GPL license) from the original work PCSE by Allard de Wit (allard.dewit@wur.nl) (EUPL license).
-import datetime
-import copy
 
+import copy
+import datetime
 from pcse.traitlets import Float, Int, Instance, Enum, Unicode
 from pcse.decorators import prepare_rates, prepare_states
 from pcse.base import ParamTemplate, StatesTemplate, RatesTemplate, SimulationObject
 from pcse import signals
 from pcse import exceptions as exc
-from datetime import date
+# from datetime import date
+from datetime import datetime as dt
 from phenology import DVS_Phenology as Phenology
 from partitioning import DVS_Partitioning as Partitioning
 from respiration import TOMGROSIM_Maintenance_Respiration as MaintenanceRespiration
@@ -20,6 +21,7 @@ from leaf_dynamics import TOMGROSIM_Leaf_Dynamics as Leaf_Dynamics
 from storage_organ_dynamics import TOMGROSIM_Storage_Organ_Dynamics as Storage_Organ_Dynamics
 import pandas as pd
 import math
+
 #%%
 # class Tomgrosim(SimulationObject):
 class Tomgrosim(SimulationObject):
@@ -59,43 +61,42 @@ class Tomgrosim(SimulationObject):
         MRES = Float(-99.)
         ASRC = Float(-99.)
         ASSIM = Instance(list)
+        measured_photosynthesis = Instance(list)
 
 
     class RateVariables(RatesTemplate):
         pass
 
-    def initialize(self, day, kiosk, parvalues):
+    def initialize(self, day, kiosk, parvalues,cropinitiallist,modelkinds):
         print("tomgrosim.py")
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
-        self.pheno = Phenology(day, kiosk, parvalues)
+        self.pheno = Phenology(day, kiosk, parvalues,cropinitiallist)
         self.part = Partitioning(day, kiosk, parvalues)
         self.mres = MaintenanceRespiration(day, kiosk, parvalues)
-        self.ro_dynamics = Root_Dynamics(day, kiosk, parvalues)
-        self.st_dynamics = Stem_Dynamics(day, kiosk, parvalues)
-        self.so_dynamics = Storage_Organ_Dynamics(day, kiosk, parvalues)
-        self.lv_dynamics = Leaf_Dynamics(day, kiosk, parvalues)
+        self.ro_dynamics = Root_Dynamics(day, kiosk, parvalues,cropinitiallist)
+        self.st_dynamics = Stem_Dynamics(day, kiosk, parvalues,cropinitiallist)
+        self.so_dynamics = Storage_Organ_Dynamics(day, kiosk, parvalues,cropinitiallist)
+        self.lv_dynamics = Leaf_Dynamics(day, kiosk, parvalues,cropinitiallist)
+
 
         # Initial total (living) above-ground biomass of the crop
         TDM = self.kiosk.WLV + self.kiosk.WST + self.kiosk.WSO + self.kiosk.WRO
         DMII = 0.2*TDM
-        # TDM = self.kiosk.TWLV + 1 + self.kiosk.TWSO
-
-        # GASS = copy.deepcopy(self.params.GASSL)
+        measured_photosynthesis = cropinitiallist["measured_photosynthesis"]
         ASSIM = copy.deepcopy(self.params.ASSIMI)
 
         self.states = self.StateVariables(kiosk,
-                                          publish=["CVF","DMI","RGRL","TDM","GASST","MREST","ASA", "AF", "CAF","DMA","ASSIM"],
+                                          publish=["measured_photosynthesis","CVF","DMI","RGRL","TDM","GASST","MREST","ASA", "AF", "CAF","DMA","ASSIM"],
+                                          measured_photosynthesis=measured_photosynthesis,
                                           CVF=None,DMI=DMII,RGRL=[],DMA=None,MRES=None,ASRC=None,GASS=None,ASSIM=ASSIM,
                                           TDM=TDM, GASST=0.0, MREST=0.0,
                                           DOF=None, FINISH_TYPE=None,
                                           ASA=0.0, AF=None, CAF=1.0)
-
         self._connect_signal(self._on_CROP_FINISH, signal=signals.crop_finish)
 
     @prepare_rates
-    def calc_rates(self, day, drv):
-    # def calc_rates(self, day, kiosk, drv):
+    def calc_rates(self, day, drv,my_drv,modelkinds):
         print("day",day)
         p = self.params
         r = self.rates
@@ -107,37 +108,15 @@ class Tomgrosim(SimulationObject):
         RGR = k.DMI / k.TDM
         k.RGRL.insert(0, RGR)
 
-        # Potential assimilation
-
-        # t_year = day.strftime("%Y")
-        # t_month = day.strftime("%m").lstrip("0")
-        # t_day = day.strftime("%d").lstrip("0")
-        # without_0day = t_year + "/" + t_month + "/" + t_day
-
-        # if day < date(2006,7,1):
-        #     #3か月は仮データでシミュレーション上で大きくなるまで待機
-        #     #ここで実測光合成量をyamlから取得している
-        #     def assim_get(Gass_list,day):
-        #         t_year = day.strftime("%Y")
-        #         t_month = day.strftime("%m").lstrip("0")
-        #         t_day = day.strftime("%d").lstrip("0")
-        #         without_0day = t_year + "/" + t_month + "/" + t_day
-        #         for row in range(len(Gass_list)):
-        #             tmp_day = Gass_list[row][0]
-        #             if tmp_day == str(without_0day):
-        #                 return Gass_list[row][-1]
-        # # k.GASS = self.assim(day, drv) + k.ASA
-
-        # #単位面積当たりの日積算光合成量　[gCH2O m-2 d-1] = チャンバ日積算光合成量　[mol d-1] *30 [gC-H2O mol-1] / 2 [/plant] *p.PD　[plant m-2]
-        #     k.GASS = assim_get(k.ASSIM,day) + k.ASA#[gCH2O m-2 d-1]
-        #     # print("7月以前",day)
-        #     # Respiration
-        #     PMRES = self.mres(day, drv)
-        #     k.MRES  = min(k.GASS, PMRES)
-
-        #     # Net available assimilates
-        #     # k.ASRC  = k.GASS - k.MRES
-        #     k.ASRC  = k.GASS
+        if modelkinds == "Actual_measurement":
+            measured_photosynthesis = dict(k.measured_photosynthesis)
+            tdate = dt.strftime(day,"%Y/%m/%d")
+            tmp_GASS = measured_photosynthesis[tdate]
+            k.GASS = tmp_GASS + k.ASA#[gCH2O m-2 d-1]
+            # Respiration
+            PMRES = self.mres(day, drv)
+            k.MRES  = min(k.GASS, PMRES)
+            k.ASRC  = k.GASS
 
         def ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF):
             REFGR = 0.5
@@ -183,31 +162,25 @@ class Tomgrosim(SimulationObject):
             PGROS_ = PGROS * LAI
             return PGROS_
 
-        assim_calculation= "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/df_assim_calculation(EFF,PGMAX).csv"
-        df_assim_calculation = pd.read_csv(assim_calculation)
-
-
-        # if day >= date(2006,7,1):
-        tmp_GASS = 0
-        # hour = list(df_assim_calculation.query('date == "2006/7/1" and h>0')["hour"])
-        sday = day.strftime("%Y/%#m/%#d")
-        hour = list(df_assim_calculation.query('date == @sday and h>0')["hour"])
-        LAI = k.LAI
-        for i in hour:
-            tmp = (df_assim_calculation.query('date == @sday and hour==@i'))
-            SINELV = tmp["h"].iloc[-1]
-            EFF = tmp["EFF"].iloc[-1]
-            PGMAX = tmp["PGMAX"].iloc[-1]
-            PARDIR = tmp["PARDIR"].iloc[-1]
-            PARDIF = tmp["PARDIF"].iloc[-1]
-            PGROS = ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF)
-            PGROS = PGROS*7200
-            tmp_GASS += PGROS
-        tmp_GASS = tmp_GASS/1000/44*30
-        #mgCO2をgにするために1000で割り
-        k.GASS = tmp_GASS
-        # print("7月以降",day)
-        # print("k.GASS",k.GASS)
+        if modelkinds == "Predict":
+            tmp_GASS = 0
+            sday = day.strftime("%Y/%#m/%#d")
+            df_assim_calculation = my_drv
+            hour = list(df_assim_calculation.query('date == @sday and h>0')["hour"])
+            LAI = k.LAI
+            for i in hour:
+                tmp = (df_assim_calculation.query('date == @sday and hour==@i'))
+                SINELV = tmp["h"].iloc[-1]
+                EFF = tmp["EFF"].iloc[-1]
+                PGMAX = tmp["PGMAX"].iloc[-1]
+                PARDIR = tmp["PARDIR"].iloc[-1]
+                PARDIF = tmp["PARDIF"].iloc[-1]
+                PGROS = ASSIMR(EFF, PGMAX, LAI, SINELV, PARDIR, PARDIF)
+                PGROS = PGROS*7200
+                tmp_GASS += PGROS
+            tmp_GASS = tmp_GASS/1000/44*30
+            #mgCO2をgにするために1000で割り
+            k.GASS = tmp_GASS
 
         # Respiration
         PMRES = self.mres(day, drv)
@@ -238,7 +211,7 @@ class Tomgrosim(SimulationObject):
         s = self.states
         # Phenology
         self.pheno.integrate(day, delt)
-        print("ASA",k.ASA)
+
         # Assimilate pool (ASA)
         # All sinks derive their assimilates for growth from one common assimilate pool. (Heuvelink, 1996, Ph.D. thesis, p. 239 (Chapter 6.1))
         if k.DMA <= k.TPGR:
@@ -264,7 +237,6 @@ class Tomgrosim(SimulationObject):
             s.CAF = 0.01
         elif s.CAF >= 1.00:
             s.CAF = 1.00
-
         # Integrate states on leaves, storage organs, stems and roots
         self.ro_dynamics.integrate(day, delt)
         self.so_dynamics.integrate(day, delt)
@@ -274,11 +246,8 @@ class Tomgrosim(SimulationObject):
         # Total living plant dry mass
         # s.TDM = k.TWLV + 1 + k.TWSO + 1
         s.TDM = k.WLV + k.WST + k.WSO + k.WRO
-
-
         # total gross assimilation and maintenance respiration
         s.GASST += k.GASS
-
         s.MREST += k.MRES
 
     @prepare_states
