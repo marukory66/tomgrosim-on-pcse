@@ -560,7 +560,8 @@ Engine._on_CROP_START = my_on_CROP_START
 
 
 class tomatomato(Engine):
-    config = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/PCSE/tomatomato.conf"
+    #使用したいconfigファイルを指定
+    config = "@@@"
 
     def __init__(self, parameterprovider, weatherdataprovider, agromanagement,weathertimeseries,cropinitiallist,modelkinds):
         Engine.__init__(self, parameterprovider, weatherdataprovider, agromanagement, weathertimeseries,cropinitiallist,modelkinds,config=self.config)

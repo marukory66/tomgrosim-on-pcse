@@ -205,7 +205,6 @@ class Diffusion:
         df.radiation_solar = df.radiation_solar * 10**6 / 3600 # Convert the unit of solar radiation [MJ m-2 h-1] to [W m-2] (= [J m-2 s-1])
         lightparams = df.apply(lambda row: self.diffused_light(latitude=latitude,longitude=longitude,time=row['timestamp'].to_pydatetime(),irradiation=row['radiation_solar']), axis=1)
         df[["h",'P','FRACDF']] = pd.DataFrame(lightparams.tolist())
-        # df.to_csv('C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/Diffusion.csv')
         return(df)
 
 

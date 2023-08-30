@@ -29,4 +29,3 @@ def read_two_dimensions_csv(path,name):
         data[row].pop(0)
     return data
 
-aa = _create_input_data(glob.glob("C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/PCSE/input_data/*.csv"))
