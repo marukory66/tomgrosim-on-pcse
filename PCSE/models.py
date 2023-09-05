@@ -553,15 +553,10 @@ def my_on_CROP_START(self, day, crop_name=None, variety_name=None,
 Engine._on_CROP_START = my_on_CROP_START
 
 
-
-
-
-
-
-
 class tomatomato(Engine):
     #使用したいconfigファイルを指定
-    config = "@@@"
+    config = "C:/Users/maruko/OneDrive - 愛媛大学 (1)/02_PCSE/tomgrosim-on-pcse_pypl/PCSE/tomatomato.conf"
+
 
     def __init__(self, parameterprovider, weatherdataprovider, agromanagement,weathertimeseries,cropinitiallist,modelkinds):
         Engine.__init__(self, parameterprovider, weatherdataprovider, agromanagement, weathertimeseries,cropinitiallist,modelkinds,config=self.config)
