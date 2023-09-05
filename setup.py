@@ -1,7 +1,8 @@
 from setuptools import setup, find_packages
+import TOMULATION
 
 DESCRIPTION = "tomatomato: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
-NAME = 'tomatomato'
+NAME = "TOMULATION"
 AUTHOR = 'Naomichi Fujiuchi,Ryoga Maruko'
 AUTHOR_EMAIL = 'wlingwo@gmail.com'
 URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
