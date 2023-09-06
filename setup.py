@@ -14,11 +14,7 @@ DESCRIPTION = "TOMULATION: Predicts tomato yield using actual measured photosynt
 long_description = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 
 INSTALL_REQUIRES = [
-    'PyYAML>=5.1',
-    'openpyxl>=3.0.0',
-    'requests>=2.0.0',
-    'pandas>=0.25',
-    'traitlets-pcse==5.0.0.dev',
+    'pandas>=1.00',
 ]
 
 CLASSIFIERS = [
