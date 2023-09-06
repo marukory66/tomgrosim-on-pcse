@@ -7,14 +7,13 @@ AUTHOR_EMAIL = 'wlingwo@gmail.com'
 URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
 LICENSE = 'GPL3'
 DOWNLOAD_URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
-VERSION = "1.0.0"
+VERSION = "1.0.2"
 DESCRIPTION = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 
 
 long_description = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 
 INSTALL_REQUIRES = [
-    'SQLAlchemy>=1.3.0, <2.0',
     'PyYAML>=5.1',
     'openpyxl>=3.0.0',
     'requests>=2.0.0',
