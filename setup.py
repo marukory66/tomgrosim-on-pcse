@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 import TOMULATION
 
-DESCRIPTION = "tomatomato: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 NAME = "TOMULATION"
 AUTHOR = 'Naomichi Fujiuchi,Ryoga Maruko'
 AUTHOR_EMAIL = 'wlingwo@gmail.com'
@@ -9,6 +8,10 @@ URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
 LICENSE = 'GPL3'
 DOWNLOAD_URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
 VERSION = "1.0.0"
+DESCRIPTION = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
+
+
+long_description = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 
 INSTALL_REQUIRES = [
     'SQLAlchemy>=1.3.0, <2.0',
@@ -19,18 +22,19 @@ INSTALL_REQUIRES = [
     'traitlets-pcse==5.0.0.dev',
 ]
 
-
 CLASSIFIERS = [
     'Intended Audience :: Science/Research',
-    'License :: GPL3',
     'Programming Language :: Python :: 3',
     'Programming Language :: Python :: 3.8',
     'Programming Language :: Python :: 3 :: Only',
-
 ]
+
+PACKAGES = ["TOMULATION"]
 
 setup(name=NAME,
     author=AUTHOR,
+    description= DESCRIPTION,
+    long_description=long_description,
     author_email = AUTHOR_EMAIL,
     maintainer=AUTHOR,
     maintainer_email=AUTHOR_EMAIL,
@@ -39,6 +43,6 @@ setup(name=NAME,
     version=VERSION,
     download_url=DOWNLOAD_URL,
     install_requires=INSTALL_REQUIRES,
-    packages=find_packages(),
-    classifiers=CLASSIFIERS
+    packages=PACKAGES,
+    classifiers=CLASSIFIERS,
     )
