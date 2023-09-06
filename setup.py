@@ -7,7 +7,7 @@ AUTHOR_EMAIL = 'wlingwo@gmail.com'
 URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
 LICENSE = 'GPL3'
 DOWNLOAD_URL = 'https://github.com/marukory66/tomgrosim-on-pcse/tree/develop'
-VERSION = "1.0.2"
+VERSION = "1.0.3"
 DESCRIPTION = "TOMULATION: Predicts tomato yield using actual measured photosynthesis or photosynthesis predicted from environmental information."
 
 
