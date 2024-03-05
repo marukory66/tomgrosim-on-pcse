@@ -17,7 +17,7 @@ day = "2023-12-04"
 #入力した最小の葉の縦×横m²
 #入力した最小の葉の縦×横m²を入力
 mesure_leaf_area = 0.005
-#mesure_leaf_area = 0.0044
+#mesure_leaf_area = 0.005
 
 
 # 全葉
