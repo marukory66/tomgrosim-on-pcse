@@ -102,3 +102,4 @@ wofost = tomatomato(parameterprovider,weatherdataprovider, agromanagement, weath
 
 wofost.run_till_terminate()
 output = wofost.my_get_output("出力結果用path")
+#モデルの出力結果を出力するために，出力したいファイルのpathを記載
