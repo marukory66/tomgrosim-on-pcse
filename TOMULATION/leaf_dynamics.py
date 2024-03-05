@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 #%%
+# -*- coding: utf-8 -*-
+#origin
+
 # Naomichi Fujiuchi (naofujiuchi@gmail.com), April 2022
 # This is a derivative work by Fujiuchi (GNU GPL license) from the original work PCSE by Allard de Wit (allard.dewit@wur.nl) (EUPL license).
 from datetime import datetime as dt
@@ -16,8 +19,6 @@ from pcse.fileinput import ExcelWeatherDataProvider,PCSEFileReader,CABOWeatherDa
 import copy
 import os
 import pandas as pd
-#　datetimeをimportしたい
-# from datetime import date
 from datetime import datetime,timedelta
 import numpy as np
 import csv
@@ -73,17 +74,25 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         LV = cropinitiallist["LVI"] # Dry weights of the leaves that have not generated yet are 0.
         LA = cropinitiallist["LAI"] # List of initial leaf area
         DOHL = cropinitiallist["DOHLI"]
+        #1215追記
+        LVAGE =cropinitiallist["LVAGE"]
 
-        DOHL = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOHL]
-        LA = [list(map(lambda x: x if x >= 0  else None, row)) for row in LA]
-        LV = [list(map(lambda x: x if x >= 0  else None, row)) for row in LV]
+
+        DOHL = [list(map(lambda x: x if x != "None" else None, row)) for row in DOHL]
+        LA = [list(map(lambda x: float(x) if x != "None"  else None, row)) for row in LA]
+        LV = [list(map(lambda x: float(x) if x != "None"  else None, row)) for row in LV]
+
         WLV = 0.
         DWLV = 0.
         LAI = 0.
         for i in range(0, len(LV)):
             for j in range(0, len(LV[i])):
                 if DOHL[i][j] != None: # Harvested = Dead
-                    DWLV += float(LV[i][j])
+
+                    #1215 追記if DWLV[i][j] != None:
+                    if LV[i][j] != None:
+                        DWLV += float(LV[i][j])
+                    # DWLV += float(LV[i][j])
                 else: # Not harvested yet = living
                     if LV[i][j]== None:
                         pass
@@ -120,7 +129,6 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
             for j in range(0, len(k.DOEL[i])):
                 if k.DOEL[i][j] != None:
                     td = datetime.strptime(str(k.DOEL[i][j]),'%Y-%m-%d' )
-
                     td = td.date()
                     age_days = day - td
                     age_days = age_days/timedelta(days=1)
@@ -188,15 +196,13 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.LA = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.LA, k.ACL))
 
         # Update leaf SLA
-        k.SLA = [[None if a==None or b==None else a / b for a, b in zip(*rows) ] for rows in zip(k.LA, k.LV)]
-
+        # k.SLA = [[None if a == None or b==None else a / b for a, b in zip(*rows) ] for rows in zip(k.LA, k.LV)]
+        k.SLA = [[None if a == None or b==None or a == 0 or b == 0 else a / b for a, b in zip(*rows) ] for rows in zip(k.LA, k.LV)]
 
         # Update total leaf biomass
         k.WLV = 0.
         k.DWLV = 0.
         k.LAI = 0.
-
-
 
         for i in range(0, len(k.LV)):
             for j in range(0, len(k.LV[i])):
@@ -204,7 +210,10 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
                     if i >= 1 and j >= 3:
                         pass
                     else:
-                        k.DWLV += k.LV[i][j]
+                        #1215追記 if k.LV[i][j] != None:
+                            if k.LV[i][j] != None:
+                                k.DWLV += k.LV[i][j]
+                            # k.DWLV += k.LV[i][j]
                 else:
                     if k.LV[i][j]== None:
                         pass
@@ -214,13 +223,29 @@ class TOMGROSIM_Leaf_Dynamics(SimulationObject):
         k.TWLV = k.WLV + k.DWLV
         # Harvest scheme for updating DOHL
         # DOHL ... If the development stage (DVSF) of the 1st fruit of the truss becomes over 0.8, then the leaves on the truss will be removed.
-        for i in range(0, len(k.DOHL)):
-            for j in range(0, len(k.DOHL[i])):
-                if k.DVSF[i][0] == None :
-                    pass
-                elif k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
-                    k.DOHL[i][j] = day
-                else:
-                    pass
+
+        #1219 変更 一枚の葉が出現すると一枚の葉を葉かきする
+        tmp_harvest_leaf_num = 0
+        for i in range(0, len(k.DOEL)):
+            for j in range(0, len(k.DOEL[i])):
+                if k.DOEL[i][j] == day:
+                    tmp_harvest_leaf_num = tmp_harvest_leaf_num + 1
+
+        tmp_harvested_leaf_num = 0
+        for i in range(0, len(k.LV)):
+            for j in range(0, len(k.LV[i])):
+                if tmp_harvest_leaf_num > tmp_harvested_leaf_num:
+                    if k.LV[i][j] != None and k.DOHL[i][j] == None:
+                        k.DOHL[i][j] = day
+                        tmp_harvested_leaf_num = tmp_harvested_leaf_num + 1
+
+        # for i in range(0, len(k.DOHL)):
+        #     for j in range(0, len(k.DOHL[i])):
+        #         if k.DVSF[i][0] == None :
+        #             pass
+        #         elif k.DOHL[i][j] == None and k.DVSF[i][0] >= 0.8:
+        #             k.DOHL[i][j] = day
+        #         else:
+        #             pass
 
 # %%

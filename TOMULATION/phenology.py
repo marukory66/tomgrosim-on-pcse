@@ -49,9 +49,9 @@ class DVS_Phenology(SimulationObject):
         DVSF = cropinitiallist["DVSFI"]
         DOEL = cropinitiallist["DOELI"]
         DOEF = cropinitiallist["DOEFI"]
-        DVSF = [list(map(lambda x: x if x >= 0  else None, row)) for row in DVSF]
-        DOEL = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOEL]
-        DOEF = [list(map(lambda x: x if type(x) == str else None, row)) for row in DOEF]
+        DVSF = [list(map(lambda x: float(x) if x != "None" else None, row)) for row in DVSF]
+        DOEL = [list(map(lambda x: x if x != "None" else None, row)) for row in DOEL]
+        DOEF = [list(map(lambda x: x if x != "None" else None, row)) for row in DOEF]
 
         self.states = self.StateVariables(kiosk, publish=["DVS","DVSF","DOEL","DOEF","DVRF","DVR"],
                                           DVS=DVS, DVSF=DVSF,DVRF=[],DVR=None,
@@ -65,13 +65,12 @@ class DVS_Phenology(SimulationObject):
         r = self.rates
         s = self.states
         k = self.kiosk
-
         drvTEMP = ((drv.TMIN + drv.TMAX)/2)
         # Development rate of a plant (DVR) depends on daily mean temperature (drv.TEMP) and plant age (DVS).
         k.DVR = self._dev_rate_plant(drvTEMP,k.DVS)
 
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
-
+        # k.DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
         k.DVRF =  [list(map(lambda x: self._dev_rate_fruit(drvTEMP, x), row)) for row in k.DVSF]
 
         msg = "Finished rate calculation for %s"
@@ -88,14 +87,22 @@ class DVS_Phenology(SimulationObject):
         rDVR = -0.286 + 0.1454 * math.log(drvTEMP) - 0.001 * sDVS
         return(rDVR)
 
-    def _dev_rate_fruit(self,drvTEMP, sDVSF):
+    def _dev_rate_fruit(self,drvTEMP,sDVSF):
         # Development rate of a fruit (DVRF) depends on temperature and the developmet stage of the fruit.
         # De Koning (1994, Ph.D. thesis) (and Heuvelink (1996, Annals of Botany)) used the following equation for DVRF. It described fruit growth period in cv. Counter quite well (unpublished research, Heuvelink, 1996).
         if sDVSF == None:
             return(None)
+        #1227修正
         else:
-            rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
-            return(rDVRF)
+            if int(sDVSF) > 100:
+                return sDVSF
+            else:
+                rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
+                return(rDVRF)
+
+        # else:
+        #     rDVRF = 0.0181 + math.log(drvTEMP/20) * (0.0392 - 0.213 * sDVSF + 0.415 * sDVSF**2 - 0.24 * sDVSF**3)
+        #     return(rDVRF)
 
     @prepare_states
     def integrate(self,day, delt=1.0):
@@ -127,27 +134,61 @@ class DVS_Phenology(SimulationObject):
         # 3) Add the leaf emergence after the 2nd leaf
         #
 
+
+        #1215追記　入力された果実の初期値の中で最上位層のtrussを取得，このtruss以上の中からDOEFを設定
+        tmp_truss = []
+        for i in range(0, int(k.DVS)):
+            if k.DOEF[i][0] != None:
+                tmp_truss.append(i)
+        initial_input_Fvalue_truss = max(tmp_truss)
+
+        # 初期値に入力した葉より下の葉には入力しない
+
         for i in range(0, int(k.DVS)):
             # 1)
-            if k.DOEF[i][0] != None:
-                for j in range(len(k.DOEF[i])):
-                    if k.DOEF[i][j] != None:
-                        pass
-                    else:
-                        k.DOEF[i][j] = day
-                        k.FF[i][j] = 0.1
-                        k.FD[i][j] = 0.008
-                        k.DVSF[i][j] = 0
-                        break
-            # 2)
-            else:
-                k.DOEF[i][0] = day
-                k.FF[i][0] = 0.1
-                k.FD[i][0] = 0.008
-                k.DVSF[i][0] = 0
-                if k.DOEL[i+3][0] == None:
-                    k.DOEL[i+3][0] = day
+            #1215追記
+            if i >= initial_input_Fvalue_truss:
+                if k.DOEF[i][0] != None:
+                    for j in range(len(k.DOEF[i])):
+                        if k.DOEF[i][j] != None:
+                            pass
+                        else:
+                            k.DOEF[i][j] = day
+                            k.FF[i][j] = 0.1
+                            k.FD[i][j] = 0.008
+                            k.DVSF[i][j] = 0
+                            break
+                # 2)
+                else:
+                    k.DOEF[i][0] = day
+                    k.FF[i][0] = 0.1
+                    k.FD[i][0] = 0.008
+                    k.DVSF[i][0] = 0
+                    #1215追記
+                    if i >= initial_input_Fvalue_truss:
+                        if k.DOEL[i+3][0] == None:
+                            k.DOEL[i+3][0] = day
 
+        # for i in range(0, int(k.DVS)):
+        #     # 1)
+        #     if k.DOEF[i][0] != None:
+        #         for j in range(len(k.DOEF[i])):
+        #             if k.DOEF[i][j] != None:
+        #                 pass
+        #             else:
+        #                 k.DOEF[i][j] = day
+        #                 k.FF[i][j] = 0.1
+        #                 k.FD[i][j] = 0.008
+        #                 k.DVSF[i][j] = 0
+        #                 break
+        #     # 2)
+        #     else:
+        #         k.DOEF[i][0] = day
+        #         k.FF[i][0] = 0.1
+        #         k.FD[i][0] = 0.008
+        #         k.DVSF[i][0] = 0
+        #         if k.DOEL[i+3][0] == None:
+        #             k.DOEL[i+3][0] = day
 
         # 3)
         if k.DVS % 1 >= 2/3:
@@ -158,21 +199,29 @@ class DVS_Phenology(SimulationObject):
             nLEAF = 1
         for i in range(0, int(k.DVS+2)):
             for j in range(0,3):
-                  if k.DOEL[i][j] == None:
-                    k.DOEL[i][j] = day
+                #1215追記
+                if i >= initial_input_Fvalue_truss:
+                    if k.DOEL[i][j] == None:
+                        k.DOEL[i][j] = day
         i = int(k.DVS) + 3
         if k.DOEL[i][0] == None:
-            k.DOEL[i][0] = day
-            k.LA[i][0] = 0.0001
-            k.LV[i][0] = 0.01
+            #1215追記
+            if i >= initial_input_Fvalue_truss:
+                    k.DOEL[i][0] = day
+                    k.LA[i][0] = 0.0001
+                    k.LV[i][0] = 0.01
         if k.DOEL[i][1] == None and nLEAF >= 2:
-            k.DOEL[i][1] = day
-            k.LA[i][1] = 0.0001
-            k.LV[i][1] = 0.01
+            #1215追記
+                if i >= initial_input_Fvalue_truss:
+                    k.DOEL[i][1] = day
+                    k.LA[i][1] = 0.0001
+                    k.LV[i][1] = 0.01
         if k.DOEL[i][2] == None and nLEAF == 3:
-            k.DOEL[i][2] = day
-            k.LA[i][2] = 0.0001
-            k.LV[i][2] = 0.01
+            #1215追記
+                if i >= initial_input_Fvalue_truss:
+                    k.DOEL[i][2] = day
+                    k.LA[i][2] = 0.0001
+                    k.LV[i][2] = 0.01
 
         msg = "Finished state integration for %s"
         self.logger.debug(msg % day)

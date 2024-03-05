@@ -1,10 +1,25 @@
 #%%
+"""
+公開用コード
 import datetime
-from create_csv.calc_diffusion_fraction  import *
 import pandas as pd
+from TOMULATION.create_csv.calc_diffusion_fraction  import *
+from TOMULATION.create_csv.chamber import pick_up_chamber_data
+from TOMULATION.create_csv.assimP import calculate_LPHCUR,LPHCUR
+from TOMULATION.create_csv.weather_excel import temperature_outside_chamber
+"""
+"""
+ローカル作業用コード
+"""
+import datetime
+import pandas as pd
+from create_csv.calc_diffusion_fraction  import *
 from create_csv.chamber import pick_up_chamber_data
 from create_csv.assimP import calculate_LPHCUR,LPHCUR
 from create_csv.weather_excel import temperature_outside_chamber
+
+
+
 
 def create_(g_prec_no,g_block_no,g_start_date,g_end_date,plantdata_excel_2hour,chamber_explanatory,nl1):
     plantdata_excel_2hour = plantdata_excel_2hour

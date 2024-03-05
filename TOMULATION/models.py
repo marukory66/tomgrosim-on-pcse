@@ -15,6 +15,7 @@ from pcse import exceptions as exc
 from pcse import settings
 import pandas as pd
 import os
+import csv
 
 class my_Engine(BaseEngine):
     """Simulation engine for simulating the combined soil/crop system.
@@ -113,7 +114,7 @@ class my_Engine(BaseEngine):
     LA_saved_output = pd.DataFrame(columns=["DAY","params"])
     LV_saved_output = pd.DataFrame(columns=["DAY","params"])
     SLA_saved_output = pd.DataFrame(columns=["DAY","params"])
-    params_List = pd.DataFrame(columns=["DAY","WSO","DWSO","YWSO","TWSO","SDMC","TDM","GASST","MREST","ASA","AF","CAF","DMI","CVF","DMA","GASS","MRES","ASRC","WRO","TWRO","GRRO","TWST","WST","GRST","LAI","WLV","DWLV","SSLA","FR","FL","FS","FO","TPGR","TMPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR","TPGRST","TPGRRO","PF","DVS","DVR","RGR"])
+    params_List = pd.DataFrame(columns=["DAY","NOHF","WSO","DWSO","YWSO","TWSO","SDMC","TDM","GASST","MREST","ASA","AF","CAF","DMI","CVF","DMA","GASS","MRES","ASRC","WRO","TWRO","GRRO","TWST","WST","GRST","LAI","WLV","DWLV","SSLA","FR","FL","FS","FO","TPGR","TMPGR","TPGRLV","TMPGRLV","TPGRFR","TMPGRFR","TPGRST","TPGRRO","PF","DVS","DVR","RGR"])
 
     def __init__(self, parameterprovider, weatherdataprovider, agromanagement, weathertimeseries, cropinitiallist,modelkinds, config=None):
 
@@ -182,37 +183,107 @@ class my_Engine(BaseEngine):
 
     def output_lists(self,day,kiosk):
 
-        self.DMC_saved_output = self.DMC_saved_output.append({"DAY":day,"params":kiosk.DMC}, ignore_index=True)
-        self.DOEL_saved_output = self.DOEL_saved_output.append({"DAY":day,"params":kiosk.DOEL}, ignore_index=True)
-        self.DOHF_saved_output = self.DOHF_saved_output.append({"DAY":day,"params":kiosk.DOHF}, ignore_index=True)
-        self.DOHL_saved_output = self.DOHF_saved_output.append({"DAY":day,"params":kiosk.DOEL}, ignore_index=True)
-        self.DVSF_saved_output = self.DVSF_saved_output.append({"DAY":day,"params":kiosk.DVSF}, ignore_index=True)
-        self.FD_saved_output = self.FD_saved_output.append({"DAY":day,"params":kiosk.FD}, ignore_index=True)
-        self.FF_saved_output = self.FF_saved_output.append({"DAY":day,"params":kiosk.FF}, ignore_index=True)
-        self.LA_saved_output = self.LA_saved_output.append({"DAY":day,"params":kiosk.LA}, ignore_index=True)
-        self.LV_saved_output = self.LV_saved_output.append({"DAY":day,"params":kiosk.LV}, ignore_index=True)
-        self.SLA_saved_output = self.LV_saved_output.append({"DAY":day,"params":kiosk.SLA}, ignore_index=True)
-        self.DOEF_saved_output = self.DOEF_saved_output.append({"DAY":day,"params":kiosk.DOEF}, ignore_index=True)
-        self.params_List = self.params_List.append({"DAY":day,"WSO":kiosk.WSO,"DWSO":kiosk.DWSO,"YWSO":kiosk.YWSO,"TWSO":kiosk.TWSO,"SDMC":kiosk.SDMC,"TDM":kiosk.TDM,"GASST":kiosk.GASST,"MREST":kiosk.MREST,"ASA":kiosk.ASA,"AF":kiosk.AF,"CAF":kiosk.CAF,"DMI":kiosk.DMI,"CVF":kiosk.CVF,"DMA":kiosk.DMA,"GASS":kiosk.GASS,"MRES":kiosk.MRES,"ASRC":kiosk.ASRC,"WRO":kiosk.WRO,"TWRO":kiosk.TWRO,"GRRO":kiosk.GRRO,"TWST":kiosk.TWST,"WST":kiosk.WST,"GRST":kiosk.GRST,"LAI":kiosk.LAI,"WLV":kiosk.WLV,"DWLV":kiosk.DWLV,"SSLA":kiosk.SSLA,"FR":kiosk.FR,"FL":kiosk.FL,"FS":kiosk.FS,"FO":kiosk.FO,"TPGR":kiosk.TPGR,"TMPGR":kiosk.TMPGR,"TPGRLV":kiosk.TPGRLV,"TMPGRLV":kiosk.TMPGRLV,"TPGRFR":kiosk.TPGRFR,"TMPGRFR":kiosk.TMPGRFR,"TPGRST":kiosk.TPGRST,"TPGRRO":kiosk.TPGRRO,"PF":kiosk.PF,"DVS":kiosk.DVS,"DVR":kiosk.DVR,"RGR":kiosk.RGR}, ignore_index=True)
+        self.params_List = self.params_List.append({"DAY":day,"NOHF":kiosk.NOHF,"WSO":kiosk.WSO,"DWSO":kiosk.DWSO,"YWSO":kiosk.YWSO,"TWSO":kiosk.TWSO,"SDMC":kiosk.SDMC,"TDM":kiosk.TDM,"GASST":kiosk.GASST,"MREST":kiosk.MREST,"ASA":kiosk.ASA,"AF":kiosk.AF,"CAF":kiosk.CAF,"DMI":kiosk.DMI,"CVF":kiosk.CVF,"DMA":kiosk.DMA,"GASS":kiosk.GASS,"MRES":kiosk.MRES,"ASRC":kiosk.ASRC,"WRO":kiosk.WRO,"TWRO":kiosk.TWRO,"GRRO":kiosk.GRRO,"TWST":kiosk.TWST,"WST":kiosk.WST,"GRST":kiosk.GRST,"LAI":kiosk.LAI,"WLV":kiosk.WLV,"DWLV":kiosk.DWLV,"SSLA":kiosk.SSLA,"FR":kiosk.FR,"FL":kiosk.FL,"FS":kiosk.FS,"FO":kiosk.FO,"TPGR":kiosk.TPGR,"TMPGR":kiosk.TMPGR,"TPGRLV":kiosk.TPGRLV,"TMPGRLV":kiosk.TMPGRLV,"TPGRFR":kiosk.TPGRFR,"TMPGRFR":kiosk.TMPGRFR,"TPGRST":kiosk.TPGRST,"TPGRRO":kiosk.TPGRRO,"PF":kiosk.PF,"DVS":kiosk.DVS,"DVR":kiosk.DVR,"RGR":kiosk.RGR}, ignore_index=True)
+
+        csv_FF = "FF.csv"
+        with open(csv_FF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.FF])
+        csv_FD = "FD.csv"
+        with open(csv_FD, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.FD])
+        csv_DVSF = "DVSF.csv"
+        with open(csv_DVSF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DVSF])
+        csv_LV = "LV.csv"
+        with open(csv_LV, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.LV])
+        csv_DOHL = "DOHL.csv"
+        with open(csv_DOHL, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DOHL])
+        csv_DOEL = "DOEL.csv"
+        with open(csv_DOEL, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DOEL])
+        csv_GRFR = "GRFR.csv"
+        with open(csv_GRFR, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.GRFR])
+        csv_GRFRF = "GRFRF.csv"
+        with open(csv_GRFRF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.GRFRF])
+        csv_PGRFR = "PGRFR.csv"
+        with open(csv_PGRFR, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.PGRFR])
+        csv_MPGRFR = "MPGRFR.csv"
+        with open(csv_MPGRFR, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.MPGRFR])
+        csv_FRAGE = "FRAGE.csv"
+        with open(csv_FRAGE, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.FRAGE])
+        csv_DMC = "DMC.csv"
+        with open(csv_DMC, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DMC])
+        csv_DOEF = "DOEF.csv"
+        with open(csv_DOEF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DOEF])
+        csv_DOHF = "DOHF.csv"
+        with open(csv_DOHF, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.DOHF])
+        csv_LA = "LA.csv"
+        with open(csv_LA, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.LA])
+        csv_SLA = "SLA.csv"
+        with open(csv_SLA, mode="a", encoding="utf-8") as f:
+            f.write(str(day)+",")
+            writer = csv.writer(f, lineterminator='\n')
+            writer.writerows([kiosk.SLA])
+
+
+
 
     def my_get_output(self,path):
+
         os.makedirs(path,exist_ok=True)
-        self.DMC_saved_output.to_csv(path+"/"+"DMC.csv")
-        self.DOEF_saved_output.to_csv(path+"/"+"DOEF.csv")
-        self.DOEL_saved_output.to_csv(path+"/"+"DMEL.csv")
-        self.DOHF_saved_output.to_csv(path+"/"+"DOHF.csv")
-        self.DOHL_saved_output.to_csv(path+"/"+"DOHL.csv")
-        self.DVSF_saved_output.to_csv(path+"/"+"DVSF.csv")
-        self.FD_saved_output.to_csv(path+"/"+"FD.csv")
-        self.FF_saved_output.to_csv(path+"/"+"FF.csv")
-        self.LA_saved_output.to_csv(path+"/"+"LA.csv")
-        self.LV_saved_output.to_csv(path+"/"+"LV.csv")
-        self.SLA_saved_output.to_csv(path+"/"+"SLA.csv")
+        # self.DMC_saved_output.to_csv(path+"/"+"DMC.csv")
+        # self.DOEF_saved_output.to_csv(path+"/"+"DOEF.csv")
+        # self.DOEL_saved_output.to_csv(path+"/"+"DOEL.csv")
+        # self.DOHF_saved_output.to_csv(path+"/"+"DOHF.csv")
+        # self.DOHL_saved_output.to_csv(path+"/"+"DOHL.csv")
+        # self.DVSF_saved_output.to_csv(path+"/"+"DVSF.csv")
+        # self.FD_saved_output.to_csv(path+"/"+"FD.csv")
+        # self.FF_saved_output.to_csv(path+"/"+"FF.csv")
+        # self.LA_saved_output.to_csv(path+"/"+"LA.csv")
+        # self.LV_saved_output.to_csv(path+"/"+"LV.csv")
+        # self.SLA_saved_output.to_csv(path+"/"+"SLA.csv")
         self.params_List.to_csv(path+"/"+"params.csv")
-
-
-        return self.FF_saved_output
-
 
     def calc_rates(self, day, drv, my_drv,modelkinds):
 
@@ -230,8 +301,6 @@ class my_Engine(BaseEngine):
         # Check if flag is present to finish crop simulation
         if self.flag_crop_finish:
             self._finish_cropsimulation(day)
-
-
 
     def integrate(self, day, delt):
 
@@ -272,10 +341,8 @@ class my_Engine(BaseEngine):
         # Rate calculation
         self.calc_rates(self.day, self.drv, self.my_drv,self.modelkinds)
 
-
         if self.flag_terminate is True:
             self._terminate_simulation(self.day)
-
 
     def run(self, days=1):
         """Advances the system state with given number of days"""

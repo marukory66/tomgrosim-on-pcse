@@ -48,6 +48,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         MPGRFR = Instance(list) # Maximum potential growth rate of a fruit
         SDMC = Float(-99.) # Structural dry matter content of a fruit
         FRAGE = Instance(list) # Age of a fruit [d]
+        NOHF = Float(-99.) # number of harbest fruit
 
     def initialize(self, day, kiosk, parvalues,cropinitiallist):
 
@@ -61,11 +62,10 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         FF = cropinitiallist["FFI"] # List of fresh mass of fruits. Weights of the fruits that have not generated yet are 0.
         DOHF = cropinitiallist["DOHFI"]
 
-        DOHF = [list(map(lambda x: x if x >= 0  else None, row)) for row in DOHF]
-        FF = [list(map(lambda x: x if x >= 0  else None, row)) for row in FF]
-        DMC = [list(map(lambda x: x if x >= 0  else None, row)) for row in DMC]
-        FD = [list(map(lambda x: x if x >= 0  else None, row)) for row in FD]
-
+        DOHF = [list(map(lambda x: x if x != "None"  else None, row)) for row in DOHF]
+        FF = [list(map(lambda x: float(x) if x != "None"  else None, row)) for row in FF]
+        DMC = [list(map(lambda x: float(x) if x != "None"  else None, row)) for row in DMC]
+        FD = [list(map(lambda x: float(x) if x != "None"  else None, row)) for row in FD]
         WSO = 0.
         DWSO = 0.
         YWSO = 0.
@@ -80,13 +80,13 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
                     else:
                         pass
         TWSO = WSO + DWSO # Total dry mass of fruits (both living and dead)
-        self.states = self.StateVariables(kiosk, publish=["FD","DMC","FF","DOHF","WSO","DWSO","YWSO","TWSO","GRFR","PGRFR","MPGRFR","SDMC","FRAGE"],
-                                          FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,GRFR=[], GRFRF=[], PGRFR=[], MPGRFR=[], SDMC=None, FRAGE=[],
+        NOHF = 0
+        self.states = self.StateVariables(kiosk, publish=["NOHF","FD","DMC","FF","DOHF","WSO","DWSO","YWSO","TWSO","GRFR","PGRFR","MPGRFR","SDMC","FRAGE","NOHF"],
+                                          NOHF=NOHF,FD=FD, DMC=DMC, FF=FF, DOHF=DOHF,GRFR=[], GRFRF=[], PGRFR=[], MPGRFR=[], SDMC=None, FRAGE=[],
                                           WSO=WSO, DWSO=DWSO, YWSO=YWSO, TWSO=TWSO)
         self.rates = self.RateVariables(kiosk)
     @prepare_rates
     def calc_potential(self,  day, drv):
-
 
         k = self.kiosk
         r = self.rates
@@ -117,7 +117,8 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
             else:
                 pass
 
-        k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)) if isinstance(x,float) else None, row )) for row in k.DVSF] # p.PD: plant density
+        # k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)) if isinstance(x,float) else None, row )) for row in k.DVSF]
+        k.MPGRFR = [list(map(lambda x: p.PD * p.POFA * p.POFB * (1 + exp(-p.POFB*(x - p.POFC)))**(1/(1-p.POFD)) / ((p.POFD-1) * (exp(p.POFB * (x - p.POFC)) + 1)) if isinstance(x,float) and x < 100 else None, row )) for row in k.DVSF] # p.PD: plant density
         k.MPGRFR = [[MPGRFR_(a,b,c) for a, b, c in zip(*rows)] for rows in zip(k.MPGRFR, LOH,k.DVRF)]
         # The cumulative adaptation factor (CAF) is a state variable calculated in wofost.py
         k.PGRFR = [list(map(lambda x: k.CAF * x if isinstance(x,float) else None, row)) for row in k.MPGRFR]
@@ -135,7 +136,7 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         k.GRFRF = [list(map(lambda x: x / k.SDMC if isinstance(x,float) else None, row)) for row in k.GRFR] # Convert dry mass increase to fresh mass increase
 
     @prepare_states
-    def integrate(self,day, delt=1.0):
+    def integrate(self,day,delt=1.0):
         params = self.params
         r = self.rates
         s = self.states
@@ -150,11 +151,11 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
                 return sum(x)
         # Update fruit dry mass
         k.FD = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.FD, k.GRFR))
+
         # Update fruit fresh mass
         k.FF = list(map(lambda l1, l2: [sum_(x) for x in zip(l1, l2)], k.FF, k.GRFRF))
 
         # Update fruit dry matter content
-
         k.DMC = [[None if a==None or b==None or a==0 or b==0 else a / b for a, b in zip(*rows) ] for rows in zip(k.FD, k.FF)]
 
         # Update yield (dead fruit) and total fruit mass on plants (living fruit)
@@ -173,13 +174,15 @@ class TOMGROSIM_Storage_Organ_Dynamics(SimulationObject):
         k.TWSO = k.WSO + k.DWSO # Total dry mass of fruits (both living and dead)
         # Harvest scheme for updating DOHF
         # DOHF ... If the development stage (DVSF) of the fruit becomes over 1.0, then the fruit will be harvested.
+
+        k.NOHF = 0
+
         for i in range(0, len(k.DOHF)):
             for j in range(0, len(k.DOHF[i])):
                 if k.DVSF[i][j] == None :
                     pass
-                elif k.DOHF[i][j] == None and k.DVSF[i][j] >= 1.0:
+                elif k.DOHF[i][j] == None and k.DVSF[i][j] >= float(1.13885374273369+0.05):
                     k.DOHF[i][j] = day
+                    k.NOHF += 1
                 else:
                     pass
-
-# %%

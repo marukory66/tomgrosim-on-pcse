@@ -67,7 +67,6 @@ class Tomgrosim(SimulationObject):
         pass
 
     def initialize(self, day, kiosk, parvalues,cropinitiallist,modelkinds):
-        print("tomgrosim.py")
         self.params = self.Parameters(parvalues)
         self.kiosk = kiosk
         self.pheno = Phenology(day, kiosk, parvalues,cropinitiallist)
@@ -96,7 +95,6 @@ class Tomgrosim(SimulationObject):
 
     @prepare_rates
     def calc_rates(self, day, drv,my_drv,modelkinds):
-        print("day",day)
         p = self.params
         r = self.rates
         k = self.kiosk
@@ -215,10 +213,10 @@ class Tomgrosim(SimulationObject):
         # All sinks derive their assimilates for growth from one common assimilate pool. (Heuvelink, 1996, Ph.D. thesis, p. 239 (Chapter 6.1))
         if k.DMA <= k.TPGR:
             k.DMI = k.DMA
-            s.ASA = 0
+            k.ASA = 0
         else:
             k.DMI = k.TPGR
-            s.ASA = (k.DMA - k.TPGR) / k.CVF
+            k.ASA = (k.DMA - k.TPGR) / k.CVF
         # Cumulative adaptation (CAF) (De Koning, 1994, Ph.D. thesis, p. 144)
         # Relative adaptation factor (AF) is the difference between 1 and the ratio of the actual potential growth rate to the availability of dry matter.
         # The potential growth rate of a fruit adapts to the plant’s amount of dry matter available for growth.
@@ -226,16 +224,17 @@ class Tomgrosim(SimulationObject):
         # The adaptation factro af is assumed to be equal for all organs and, moreover, af is not affected by the organ's develoment stage.
         # Hence, in the model the amount of calculations are reduced when introducing a single scalar type variable that represents the cumulative (over time) adaptation (CAF).
         # 0 < CAF <= 1, initial CAF = 1
-        s.AF = (k.DMA - k.TPGR) / k.TMPGR
-        if s.AF < -0.03:
-            s.AF = -0.03
-        elif s.AF > 0.03:
-            s.AF = 0.03
-        s.CAF += s.AF
-        if s.CAF < 0.01:
-            s.CAF = 0.01
-        elif s.CAF >= 1.00:
-            s.CAF = 1.00
+        k.AF = (k.DMA - k.TPGR) / k.TMPGR
+        if k.AF < -0.03:
+            k.AF = -0.03
+        elif k.AF > 0.03:
+            k.AF = 0.03
+        k.CAF += k.AF
+        if k.CAF < 0.01:
+            k.CAF = 0.01
+        elif k.CAF >= 1.00:
+            k.CAF = 1.00
+
         # Integrate states on leaves, storage organs, stems and roots
         self.ro_dynamics.integrate(day, delt)
         self.so_dynamics.integrate(day, delt)
@@ -244,10 +243,15 @@ class Tomgrosim(SimulationObject):
 
         # Total living plant dry mass
         # s.TDM = k.TWLV + 1 + k.TWSO + 1
-        s.TDM = k.WLV + k.WST + k.WSO + k.WRO
+        # s.TDM = k.WLV + k.WST + k.WSO + k.WRO
+        # # total gross assimilation and maintenance respiration
+        # s.GASST += k.GASS
+        # s.MREST += k.MRES
+        k.TDM = k.WLV + k.WST + k.WSO + k.WRO
         # total gross assimilation and maintenance respiration
-        s.GASST += k.GASS
-        s.MREST += k.MRES
+        k.GASST += k.GASS
+        k.MREST += k.MRES
+
 
     @prepare_states
     def finalize(self, day):
